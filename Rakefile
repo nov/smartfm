@@ -60,6 +60,7 @@ spec = Gem::Specification.new do |s|
 	s.test_files        = Dir["test/*_test.rb"]
 
 	#s.add_dependency('activesupport', '>=1.3.1')
+	s.add_dependency('json')
 	#s.required_ruby_version = '>= 1.8.2'
 
 	s.files = %w(README ChangeLog Rakefile) +
