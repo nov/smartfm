@@ -2,7 +2,7 @@ class Iknow::Config
   attr_accessor :host, :port, :user_agent, :application_name, :application_version, :application_url, :source
 
   @@defaults = {
-    :host                => 'api.iknow.co.jp',
+    :host                => 'api.dev.iknow.co.jp',
     :port                => 80,
     :user_agent          => 'default',
     :application_name    => 'iKnow! API',

@@ -1,2 +1,2 @@
-require 'lib/iknow/core/version'
-require 'lib/iknow/core/config'
+require 'iknow/core/version'
+require 'iknow/core/config'
