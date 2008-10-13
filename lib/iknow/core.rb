@@ -1,2 +1,2 @@
-require File.dirname(__FILE__) + '/core/version'
-require File.dirname(__FILE__) + '/core/config'
+require 'iknow/core/version'
+require 'iknow/core/config'
