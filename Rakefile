@@ -13,7 +13,7 @@ include FileUtils
 NAME              = "iknow"
 AUTHOR            = "nov"
 EMAIL             = "nmatake@cerego.co.jp"
-DESCRIPTION       = "A rubygem for iKnow! API"
+DESCRIPTION       = "A rubygem for iKnow! APIs"
 RUBYFORGE_PROJECT = "iknow"
 HOMEPATH          = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 BIN_FILES         = %w(  )
