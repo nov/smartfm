@@ -1,6 +1,8 @@
 
 = iknow
 
+A rubygem for iKnow! APIs
+by nov <nmatake@cerego.co.jp>
 
 == Description
 
@@ -47,4 +49,4 @@
 
 Author::    nov <nmatake@cerego.co.jp>
 Copyright:: Copyright (c) 2008 nov
-License::   
+License::   MIT License
