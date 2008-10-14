@@ -20,7 +20,6 @@ BIN_FILES         = %w(  )
 
 $LOAD_PATH.unshift "#{File.dirname(__FILE__)}/lib"
 require 'lib/iknow'
-require 'ext/hash'
 VERS              = Iknow::Version.to_version
 REV = File.read(".svn/entries")[/committed-rev="(d+)"/, 1] rescue nil
 CLEAN.include ['**/.*.sw?', '*.gem', '.config']
