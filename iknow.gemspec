@@ -1,4 +1,3 @@
-(in /Users/nov/Desktop/iknow)
 Gem::Specification.new do |s|
   s.name = %q{iknow}
   s.version = "0.0.1"
