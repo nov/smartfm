@@ -6,27 +6,31 @@ by nov <nmatake@cerego.co.jp>
 
 == Description
 
-# User API
-# @user = Iknow::User.find('matake')
-# @user.items
-# @user.lists
-# @user.study_results
-# @matchied_users = Iknow::User.matching('matake')
+## Set API Key (in environment.rb etc.)
+Iknow::Config.init do |conf|
+  conf.application_key  = YOUR_API_KEY
+end
 
+## User API
+@user = Iknow::User.find('matake')
+@user.items
+@user.lists
+@user.study_results
+@matchied_users = Iknow::User.matching('matake')
 
-# List API
-# @recent_lists = Iknow::List.recent
-# @list  = @recent_lists.first
-# @list.items
-# @list.sentences
+## List API
+@recent_lists = Iknow::List.recent
+@list  = @recent_lists.first
+@list.items
+@list.sentences
 
-# Item API
-# @recent_items = Iknow::Item.recent
-# @matchied_items = Iknow::Item.matching('record')
+## Item API
+@recent_items = Iknow::Item.recent
+@matchied_items = Iknow::Item.matching('record')
 
-# Sentence API
-# @recent_sentences = Iknow::Sentence.recent
-# @matchied_sentences = Iknow::Sentence.matching('record')
+## Sentence API
+@recent_sentences = Iknow::Sentence.recent
+@matchied_sentences = Iknow::Sentence.matching('record')
 
 == Installation
 

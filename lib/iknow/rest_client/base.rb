@@ -1,7 +1,5 @@
 class Iknow::RestClient::Base
 
-  @@config = Iknow::Config.new
-
   class RESTError < Exception
     attr_accessor :code, :message, :uri
     
@@ -37,8 +35,10 @@ class Iknow::RestClient::Base
 
   private
 
+  def self.config; Iknow::Config.instance end
+
   def self.http_connect(&block)
-    connection = Net::HTTP.new(@@config.host, @@config.port)
+    connection = Net::HTTP.new(self.config.host, self.config.port)
     request    = yield connection
     connection.start do |conn|
       response = conn.request(request)
@@ -62,11 +62,11 @@ class Iknow::RestClient::Base
     # create the contents of the HTTP header are determined by other 
     # class variables that are not designed to change after instantiation.
     @@http_header ||= { 
-      'User-Agent'             => "iKnow! API v#{Iknow::Version.to_version} [#{@@config.user_agent}]",
+      'User-Agent'             => "iKnow! API v#{Iknow::Version.to_version} [#{self.config.user_agent}]",
       'Accept'                 => 'text/x-json',
-      'X-iKnow-Client'         => @@config.application_name,
-      'X-iKnow-Client-Version' => @@config.application_version,
-      'X-iKnow-Client-URL'     => @@config.application_url,
+      'X-iKnow-Client'         => self.config.application_name,
+      'X-iKnow-Client-Version' => self.config.application_version,
+      'X-iKnow-Client-URL'     => self.config.application_url,
     }
     @@http_header
   end
