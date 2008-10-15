@@ -12,7 +12,7 @@ include FileUtils
 
 NAME              = "iknow"
 AUTHOR            = "nov"
-EMAIL             = "nmatake@cerego.co.jp"
+EMAIL             = "developer@iknow.co.jp"
 DESCRIPTION       = "A rubygem for iKnow! APIs"
 RUBYFORGE_PROJECT = "iknow"
 HOMEPATH          = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
@@ -62,6 +62,7 @@ spec = Gem::Specification.new do |s|
 
 	#s.add_dependency('activesupport', '>=1.3.1')
 	s.add_dependency('json')
+	s.add_dependency('oauth')
 	#s.required_ruby_version = '>= 1.8.2'
 
 	s.files = %w(README ChangeLog Rakefile) +

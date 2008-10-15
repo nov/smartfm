@@ -8,7 +8,7 @@ by nov <nmatake@cerego.co.jp>
 
 ## Set API Key (in environment.rb etc.)
 Iknow::Config.init do |conf|
-  conf.application_key  = YOUR_API_KEY
+  conf.api_key  = YOUR_API_KEY
 end
 
 ## User API
