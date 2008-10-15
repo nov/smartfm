@@ -32,12 +32,12 @@ class Iknow::User < Iknow::Base
       @date      = (Date.parse(params['date']) rescue nil)
     end
   end
-  
+
   def self.find(username)
     response = Iknow::RestClient::User.show(:username => username)
     self.new(response)
   end
-  
+
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
     responses = Iknow::RestClient::User.matching(params)
