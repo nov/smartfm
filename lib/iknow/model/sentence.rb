@@ -1,24 +1,18 @@
 class Iknow::Sentence < Iknow::Base
-  attr_accessor :sound, :image
-  attr_reader :text
+  ATTRIBUTES = [:sound, :image, :text]
+  WRITABLE_ATTRIBUTES = [:sound, :image]
+  attr_accessor *WRITABLE_ATTRIBUTES
+  attr_reader *(ATTRIBUTES - WRITABLE_ATTRIBUTES)
   
   def self.recent(params = {})
-    responses = Iknow::RestClient::Sentence.recent(params)
-    sentences = []
-    responses.each do |response|
-      sentences << Iknow::Sentence.new(response)
-    end
-    sentences
+    response = Iknow::RestClient::Sentence.recent(params)
+    self.deserialize(response)
   end
   
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
-    responses = Iknow::RestClient::Sentence.matching(params)
-    sentences = []
-    responses.each do |response|
-      sentences << Iknow::Sentence.new(response)
-    end
-    sentences
+    response = Iknow::RestClient::Sentence.matching(params)
+    self.deserialize(response)
   end
   
   def initialize(params = {})

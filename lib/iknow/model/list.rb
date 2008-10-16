@@ -1,26 +1,20 @@
 class Iknow::List < Iknow::Base
-  attr_accessor :title, :description, :link,
+  ATTRIBUTES = [:list_id, :title, :description, :link,
                 :language, :translation_language, :list_type, :transcript, :embed,
-                :tags, :media_entry, :author, :author_url, :attribution_license_id
-  attr_reader   :list_id
+                :tags, :media_entry, :author, :author_url, :attribution_license_id]
+  NOT_WRITABLE_ATTRIBUTES = [:list_id]
+  attr_accessor *(ATTRIBUTES - NOT_WRITABLE_ATTRIBUTES)
+  attr_reader   *NOT_WRITABLE_ATTRIBUTES
 
   def self.recent(params = {})
-    responses = Iknow::RestClient::List.recent(params)
-    lists = []
-    responses.each do |response|
-      lists << Iknow::List.new(response)
-    end
-    lists
+    response = Iknow::RestClient::List.recent(params)
+    self.deserialize(response)
   end
 
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
-    responses = Iknow::RestClient::List.matching(params)
-    lists = []
-    responses.each do |response|
-      lists << Iknow::List.new(response)
-    end
-    lists
+    response = Iknow::RestClient::List.matching(params)
+    self.deserialize(response)
   end
 
   def self.create(params = {})
@@ -33,25 +27,22 @@ class Iknow::List < Iknow::Base
     @title       = params[:title]       || params['title']
     @description = params[:description] || params['description']
     @link        = params[:link]        || params['link']
-    @items, @sentences = [], []
   end
 
   def items(params = {})
-    return @items unless @items.empty?
+    return @items if @items
 
-    responses = Iknow::RestClient::List.items(params.merge(:id => self.list_id))
-    responses.each do |item|
-      @items << Iknow::Item.new(item)
-    end
+    response = Iknow::RestClient::List.items(params.merge(:id => self.list_id))
+    @items = self.deserialize(response, :as => Iknow::Item)
+    @items
   end
 
   def sentences(params = {})
-    return @sentences unless @sentences.empty?
+    return @sentences if @sentences
 
-    responses = Iknow::RestClient::List.sentences(params.merge(:id => self.list_id))
-    responses.each do |sentence|
-      @sentences << Iknow::Sentence.new(sentence)
-    end
+    response = Iknow::RestClient::List.sentences(params.merge(:id => self.list_id))
+    @sentences = self.deserialize(response, :as => Iknow::Sentence)
+    @sentences
   end
 
   def save!

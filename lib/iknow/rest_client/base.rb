@@ -2,13 +2,13 @@ class Iknow::RestClient::Base
 
   class RESTError < Exception
     attr_accessor :code, :message, :uri
-    
+
     def initialize(params = {})
       self.code    = params[:code]
       self.message = params[:message]
       self.uri     = params[:uri]
     end
-    
+
     def to_s
       "HTTP #{@code}: #{@message} at #{@uri}"
     end
@@ -42,6 +42,10 @@ class Iknow::RestClient::Base
 
   def self.config; Iknow::Config.instance end
   
+  def self.api_key_required
+    raise ArgumentError.new("iKnow! API key is required") if self.config.api_key == ''
+  end
+
   def self.http_connect
     connection = Net::HTTP.new(self.config.host, self.config.port)
     connection.start do |conn|
@@ -107,8 +111,9 @@ class Iknow::RestClient::Base
   end
 
   def self.http_post_request(uri, params = {})
+    self.api_key_required
     request = Net::HTTP::Post.new(uri, http_header)
-    request.body = params.merge(:apikey => self.config.api_key).to_http_str
+    request.body = params.merge(:api_key => self.config.api_key).to_http_str
     request
   end
 
@@ -117,7 +122,7 @@ class Iknow::RestClient::Base
     Net::HTTP::Delete.new(path, http_header)
   end
 
-  private_class_method :http_connect, :raise_rest_error, :handle_rest_response, :http_header, :replace_uri_params,
-                       :http_get_request, :http_post_request, :http_delete_request
+  private_class_method :http_connect, :raise_rest_error, :handle_rest_response, :http_header,
+                       :replace_uri_params, :http_get_request, :http_post_request, :http_delete_request
 
 end

@@ -1,9 +1,11 @@
 class Iknow::User < Iknow::Base
-  attr_reader :username, :profile
-  
-  class Profile
-    attr_reader :name, :gender, :birthday, :description,
-                :blog_url, :profile_url, :foaf_url, :icon_url
+  ATTRIBUTES = [:username, :profile]
+  attr_reader *ATTRIBUTES
+
+  class Profile < Iknow::User
+    ATTRIBUTES = [:name, :gender, :birthday, :description, :blog_url, :profile_url, :foaf_url, :icon_url]
+    attr_reader *ATTRIBUTES
+
     def initialize(params = {})
       @name        = params['name']
       @gender      = params['gender']
@@ -15,9 +17,10 @@ class Iknow::User < Iknow::Base
       @icon_url    = params['icon_url']
     end
   end
-  
-  class StudyResult
-    attr_reader :timestamp, :seconds, :totals, :seen, :completed, :date
+
+  class StudyResult < Iknow::User
+    ATTRIBUTES = [:timestamp, :seconds, :totals, :seen, :completed, :date]
+    attr_reader *ATTRIBUTES
 
     def initialize(params = {})
       @timestamp = (params['timestamp'].to_i   rescue nil)
@@ -34,63 +37,48 @@ class Iknow::User < Iknow::Base
   end
 
   def self.find(username)
-    response = Iknow::RestClient::User.show(:username => username)
-    self.new(response)
+    response = Iknow::RestClient::User.find(:username => username)
+    self.deserialize(response)
   end
 
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
-    responses = Iknow::RestClient::User.matching(params)
-    users = []
-    responses.each do |response|
-      users << Iknow::User.new(response)
-    end
-    users
+    response = Iknow::RestClient::User.matching(params)
+    self.deserialize(response)
   end
-  
+
   def initialize(params)
     @profile  = Profile.new(params['profile'])
     @username = params['username']
-    @study_results, @items, @lists = [], [], []
   end
-  
+
   def items(params = {})
-    return @items unless @items.empty?
-    
-    responses = Iknow::RestClient::User.items(params.merge(:username => self.username))
-    responses.each do |item|
-      @items << Iknow::Item.new(item)
-    end
-    @items
+    return @items if @items
+
+    response = Iknow::RestClient::User.items(params.merge(:username => self.username))
+    self.deserialize(response, :as => Iknow::Item)
   end
-  
+
   def lists(params = {})
-    return @lists unless @lists.empty?
-    
-    responses = Iknow::RestClient::User.lists(params.merge(:username => self.username))
-    responses.each do |list|
-      @lists << Iknow::List.new(list)
-    end
-    @lists
+    return @lists if @lists
+
+    response = Iknow::RestClient::User.lists(params.merge(:username => self.username))
+    self.deserialize(response, :as => Iknow::List)
   end
-  
+
+  def friends(params = {})
+    return @friends if @friends
+
+    response = Iknow::RestClient::User.friends(params.merge(:username => self.username))
+    self.deserialize(response)
+  end
+
   def study_results(params = {})
-    return @study_results unless @study_results.empty?
-  
-    params[:application] = :iknow
+    return @study_results if @study_results
+
+    params[:application] ||= :iknow
     response = Iknow::RestClient::User.study_results(params.merge(:username => self.username))
-    response['study_results'].each do |study_result|
-      @study_results << StudyResult.new(study_result)
-    end
-    @study_results.sort! {|a, b| a.timestamp <=> b.timestamp}
+    self.deserialize(response, :as => Iknow::User::StudyResult)
   end
-  
-  def method_missing(method, *args)
-    if profile.respond_to? method
-      profile.send(method)
-    else
-      super
-    end
-  end
-  
+
 end

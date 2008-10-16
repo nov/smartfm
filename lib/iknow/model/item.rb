@@ -1,42 +1,46 @@
-class Iknow::Item
-  attr_reader :sentences, :response, :cue, :id
-  
+class Iknow::Item < Iknow::Base
+  ATTRIBUTES = [:sentences, :response, :cue, :id]
+  attr_reader *ATTRIBUTES
+
   class Response
-    attr_reader :text
+    ATTRIBUTES = [:text]
+    attr_reader *ATTRIBUTES
+    
     def initialize(params = {})
       @text = params['text']
     end
   end
-  
+
   class Cue
-    attr_accessor :sound, :part_of_speech
-    attr_reader :text
+    ATTRIBUTES = [:sound, :part_of_speech, :text]
+    NOT_WRITABLE_ATTRIBUTES = [:text]
+    attr_accessor *(ATTRIBUTES - NOT_WRITABLE_ATTRIBUTES)
+    attr_reader *NOT_WRITABLE_ATTRIBUTES
+    
     def initialize(params = {})
       @text  = params['text']
       @sound = params['sound']
       @image = params['part_of_speech']
     end
   end
-  
+
   def self.recent(params = {})
-    responses = Iknow::RestClient::Item.recent(params)
-    items = []
-    responses.each do |response|
-      items << Iknow::Item.new(response)
-    end
-    items
+    response = Iknow::RestClient::Item.recent(params)
+    self.deserialize(response)
   end
-  
+
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
-    responses = Iknow::RestClient::Item.matching(params)
-    items = []
-    responses.each do |response|
-      items << Iknow::Item.new(response)
-    end
-    items
+    response = Iknow::RestClient::Item.matching(params)
+    self.deserialize(response)
   end
-  
+
+  def self.extract(text, params = {})
+    params[:text] = text
+    response = Iknow::RestClient::Item.extract(params)
+    self.deserialize(response)
+  end
+
   def initialize(params = {})
     @id = params['id'].to_i
     @sentences = []
@@ -46,5 +50,5 @@ class Iknow::Item
     @response = params['response'] ? Iknow::Item::Response.new(params['response']) : nil
     @cue      = Iknow::Item::Cue.new(params['cue'])
   end
-  
+
 end
