@@ -1,38 +1,17 @@
-
 = iknow
 
-A rubygem for iKnow! APIs
-by nov <nmatake@cerego.co.jp>
+  by nov <nmatake@cerego.co.jp>
 
 == Description
 
-## Set API Key (in environment.rb etc.)
-Iknow::Config.init do |conf|
-  conf.api_key  = YOUR_API_KEY
-end
-
-## User API
-@user = Iknow::User.find('matake')
-@user.items
-@user.lists
-@user.study_results
-@matchied_users = Iknow::User.matching('matake')
-
-## List API
-@recent_lists = Iknow::List.recent
-@list  = @recent_lists.first
-@list.items
-@list.sentences
-
-## Item API
-@recent_items = Iknow::Item.recent
-@matchied_items = Iknow::Item.matching('record')
-
-## Sentence API
-@recent_sentences = Iknow::Sentence.recent
-@matchied_sentences = Iknow::Sentence.matching('record')
+  This rubygem is a wrapper of iKnow! API.
+  You can get pure-ruby example at example/pure_ruby.rb.
 
 == Installation
+
+  git clone http://github.com/nov/iknow.git
+  cd iknow
+  rake install
 
 === Archive Installation
 
@@ -40,14 +19,17 @@ end
 
 === Gem Installation
 
-	gem install iknow
-
+	gem install nov-iknow 
 
 == Features/Problems
 
+  Create/Add/Delete APIs are not implemented.
+  They will be implemented in a few weeks.
 
 == Synopsis
 
+  See examples and iKnow! Developers, please.
+  iKnow! Developers (http://developer.iknow.co.jp)
 
 == Copyright
 
