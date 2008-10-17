@@ -6,7 +6,7 @@ class Iknow::Base
 
   def self.deserialize(response, params = {})
     return nil if response.is_a?(Hash) and
-                 !response['error'].blank? and
+                 !response['error'].nil? and
                   response['error']['code'].to_i == 404
 
     klass = params[:as]   ? params[:as] : self

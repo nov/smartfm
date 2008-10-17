@@ -86,7 +86,7 @@ class Iknow::RestClient::Base
   end
 
   def self.http_get_request(uri, params = {})
-    unless self.config.api_key.blank?
+    unless self.config.api_key == ''
       params.merge!(:api_key => self.config.api_key)
     end
     path = (params.size > 0) ? "#{uri}?#{params.to_http_str}" : uri
@@ -101,7 +101,7 @@ class Iknow::RestClient::Base
   end
 
   def self.http_delete_request(uri, params = {})
-    unless self.config.api_key.blank?
+    unless self.config.api_key == ''
       params.merge!(:api_key => self.config.api_key)
     end
     path = (params.size > 0) ? "#{uri}?#{params.to_http_str}" : uri

@@ -68,7 +68,7 @@ end
 
 
 # Set your key and secret
-require 'iknow'
+require 'nov-iknow'
 Iknow::Config.init do |conf|
   conf.api_key               = ''
   conf.oauth_consumer_key    = ''
