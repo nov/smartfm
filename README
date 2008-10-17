@@ -30,6 +30,16 @@
 
 == Synopsis
 
+  % rails iknow_on_rails
+  % cd iknow_on_rails
+  % ./script/generate iknow
+  % rake db:create
+  % rake db:migrate
+  % ./script/server
+  
+  and go http://localhost:3000/
+
+  About Another things
   See examples and iKnow! Developers, please.
   iKnow! Developers (http://developer.iknow.co.jp)
 
