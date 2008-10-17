@@ -1,0 +1,12 @@
+NAME
+    iknow_oauth - creates a functional iknow oauth consumer
+
+SYNOPSIS
+    nothing
+
+Description:
+    Generates a model, controller, helper, view and library for making a OAuth consumer of iKnow! API.
+    No arguments are needed.
+
+Example:
+    ./script/generate iknow_oauth
