@@ -2,7 +2,7 @@ require 'rubygems'
 require 'iknow'
 
 Iknow::Config.init do |conf|
-  conf.api_key               = 'yarpp3tnrk77qx9vwwjnpt42'
+  conf.api_key               = ''
   conf.oauth_consumer_key    = ''
   conf.oauth_consumer_secret = ''
 end
@@ -28,14 +28,14 @@ end
 @user.items
 @user.lists
 @user.friends
-@user.study_results
+@user.study.results
 @matchied_users = Iknow::User.matching('matake')
 
 # ## List API
 @recent_lists = Iknow::List.recent
 @matchied_lists = Iknow::List.matching("遺伝的アルゴリズム")
-@ga_list.first.items
-@ga_list.first.sentences
+@matchied_lists.first.items
+@matchied_lists.first.sentences
 
 # ## Item API
 @recent_items = Iknow::Item.recent
