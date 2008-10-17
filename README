@@ -27,17 +27,31 @@
 
   Create/Add/Delete APIs are not implemented.
   They will be implemented in a few weeks.
+  
+  iKnow! OAuth is still pre-alpha.
+  Wait a few weeks to use it, please.
 
 == Synopsis
 
   % rails iknow_on_rails
   % cd iknow_on_rails
-  % ./script/generate iknow
+  % ./script/generate iknow_oauth
   % rake db:create
   % rake db:migrate
-  % ./script/server
   
+  and edit environment.rb like examples/iknow_on_rails
+  and add some controllers and views like examples/iknow_on_rails
   and go http://localhost:3000/
+  
+  You can run examples/iknow_on_rails
+  
+  1. DOWNLOAD THIS GEM
+  
+  2. Run the example
+    % cd iknow/examples/iknow_on_rails (cd nov-iknow/examples/iknow_on_rails ??)
+    % rake db:create
+    % rake db:migrate
+    % ./script/server
 
   About Another things
   See examples and iKnow! Developers, please.
