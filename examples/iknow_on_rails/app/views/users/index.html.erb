@@ -1,0 +1,50 @@
+<% form_tag do %>
+<div id="iknow_user_search">
+  <div class="label"><label for="iknow_username">iKnow! Username</label></div>
+  <div class="input"><%= text_field_tag "iknow_username" %></div>
+</div>
+<% end %>
+
+<% unless @user.nil? %>
+<dl>
+<% @user.profile.attributes.each do |key| %>
+  <dt><%= key %></dt>
+  <dd><%= @user.profile.send(key) || "--NOTHING TO DISPLAY--" %></dd>
+<% end %>
+  <dt>Lists</dt>
+  <dd>
+    <ul>
+      <% @user.lists.each do |list| %>
+      <li><%= link_to list.title, list.link %><br /><%= list.description %></li>
+      <% end %>
+    </ul>
+  </dd>
+  <dt>Items</dt>
+  <dd>
+    <ul>
+      <% @user.items.each do |item| %>
+      <li><%= item.cue.text %><% if item.response %> <=> <%= item.response.text %><% end %></li>
+      <% end %>
+    </ul>
+  </dd>
+  <dt>Study Results (min)</dt>
+  <dd>
+    <%= @user.study.today %>
+    <ul>
+      <% @user.study.results.each do |result| %>
+      <li><%= result.date %> :: <%= sprintf("%.1f", result.seconds.to_f/60.0) %></li>
+      <% end %>
+    </ul>
+  </dd>
+  <dt>Friends</dt>
+  <dd>
+    <ul>
+      <% @user.friends.each do |friend| %>
+      <li><%= link_to friend.profile.name, friend.profile.profile_url %></li>
+      <% end %>
+    </ul>
+  </dd>
+</dl>
+<% end %>
+
+<%= flash[:notice] rescue nil %>

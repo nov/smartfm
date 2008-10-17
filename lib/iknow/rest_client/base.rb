@@ -13,9 +13,6 @@ class Iknow::RestClient::Base
       "HTTP #{@code}: #{@message} at #{@uri}"
     end
   end
-  class ResourceError < RESTError            ; end
-  class ResourceNotFound < ResourceError     ; end
-  class ResourceAccessDenied < ResourceError ; end
 
   def self.valid_action?(action) ; self::ACTIONS.keys.include? action.to_sym          end
   def self.path(action)          ; self::ACTIONS[action.to_sym][:path]                end
@@ -40,42 +37,24 @@ class Iknow::RestClient::Base
 
   private
 
-  def self.config; Iknow::Config.instance end
+  def self.config; Iknow::Config end
   
   def self.api_key_required
     raise ArgumentError.new("iKnow! API key is required") if self.config.api_key == ''
   end
 
   def self.http_connect
-    connection = Net::HTTP.new(self.config.host, self.config.port)
+    connection = Net::HTTP.new(self.config.api_host, self.config.api_port)
     connection.start do |conn|
       request  = yield connection
       response = conn.request(request)
       handle_rest_response(response)
-      json_response = JSON.parse(response.body)
-      handle_json_response(json_response)
-      json_response
-    end
-  end
-
-  def self.raise_json_error(code, message, uri = nil)
-    case code
-    when 403
-      raise ResourceAccessDenied.new(:code => code, :message => message, :uri => uri)
-    when 404
-      raise ResourceNotFound.new(:code => code, :message => message, :uri => uri)
-    else
-      raise ResourceError.new(:code => code, :message => message, :uri => uri)
+      JSON.parse(response.body)
     end
   end
 
   def self.raise_rest_error(response, uri = nil)
     raise RESTError.new(:code => response.code, :message => response.message, :uri => uri)
-  end
-
-  def self.handle_json_response(json_response, uri = nil)
-    jsoon_error = json_response.is_a?(Hash) ? json_response['error'] : nil
-    raise_json_error(jsoon_error['code'], jsoon_error['message'], uri) unless jsoon_error.nil?
   end
 
   def self.handle_rest_response(response, uri = nil)
@@ -94,18 +73,22 @@ class Iknow::RestClient::Base
   end
 
   def self.replace_uri_params(uri, params = {})
+    replaced_uri = uri.clone
     unless params.empty?
       params.each do |key, value|
-        if uri=~/__#{key}__/
-          uri.sub!(/__#{key}__/, value.to_s)
+        if replaced_uri=~/__#{key}__/
+          replaced_uri.sub!(/__#{key}__/, value.to_s)
           params.delete(key)
         end
       end
     end
-    return uri, params
+    return replaced_uri, params
   end
 
   def self.http_get_request(uri, params = {})
+    unless self.config.api_key.blank?
+      params.merge!(:api_key => self.config.api_key)
+    end
     path = (params.size > 0) ? "#{uri}?#{params.to_http_str}" : uri
     Net::HTTP::Get.new(path, http_header)
   end
@@ -118,6 +101,9 @@ class Iknow::RestClient::Base
   end
 
   def self.http_delete_request(uri, params = {})
+    unless self.config.api_key.blank?
+      params.merge!(:api_key => self.config.api_key)
+    end
     path = (params.size > 0) ? "#{uri}?#{params.to_http_str}" : uri
     Net::HTTP::Delete.new(path, http_header)
   end

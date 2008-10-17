@@ -2,7 +2,7 @@ class Iknow::User < Iknow::Base
   ATTRIBUTES = [:username, :profile]
   attr_reader *ATTRIBUTES
 
-  class Profile < Iknow::User
+  class Profile < Iknow::Base
     ATTRIBUTES = [:name, :gender, :birthday, :description, :blog_url, :profile_url, :foaf_url, :icon_url]
     attr_reader *ATTRIBUTES
 
@@ -18,22 +18,33 @@ class Iknow::User < Iknow::Base
     end
   end
 
-  class StudyResult < Iknow::User
-    ATTRIBUTES = [:timestamp, :seconds, :totals, :seen, :completed, :date]
+  class Study < Iknow::Base
+    ATTRIBUTES = [:today, :results]
     attr_reader *ATTRIBUTES
 
-    def initialize(params = {})
-      @timestamp = (params['timestamp'].to_i   rescue nil)
-      @seconds   = (params['seconds'].to_i     rescue nil)
-      @totals    = {
-        :seconds   => (params['totals']['seconds'].to_i   rescue nil),
-        :seen      => (params['totals']['seen'].to_i      rescue nil),
-        :completed => (params['totals']['completed'].to_i rescue nil)
-      }
-      @seen      = (params['seen'].to_i        rescue nil)
-      @completed = (params['completed'].to_i   rescue nil)
-      @date      = (Date.parse(params['date']) rescue nil)
+    class Result < Iknow::Base
+      ATTRIBUTES = [:timestamp, :seconds, :totals, :seen, :completed, :date]
+      attr_reader *ATTRIBUTES
+
+      def initialize(params = {})
+        @timestamp = (params['timestamp'].to_i   rescue nil)
+        @seconds   = (params['seconds'].to_i     rescue nil)
+        @totals    = {
+          :seconds   => (params['totals']['seconds'].to_i   rescue nil),
+          :seen      => (params['totals']['seen'].to_i      rescue nil),
+          :completed => (params['totals']['completed'].to_i rescue nil)
+        }
+        @seen      = (params['seen'].to_i        rescue nil)
+        @completed = (params['completed'].to_i   rescue nil)
+        @date      = (Date.parse(params['date']) rescue nil)
+      end
     end
+
+    def initialize(params = {})
+      @today   = (Date.parse(params['today']) rescue nil)
+      @results = self.deserialize(params['study_results'], :as => Iknow::User::Study::Result)
+    end
+
   end
 
   def self.find(username)
@@ -44,7 +55,7 @@ class Iknow::User < Iknow::Base
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
     response = Iknow::RestClient::User.matching(params)
-    self.deserialize(response)
+    self.deserialize(response) || []
   end
 
   def initialize(params)
@@ -53,32 +64,24 @@ class Iknow::User < Iknow::Base
   end
 
   def items(params = {})
-    return @items if @items
-
     response = Iknow::RestClient::User.items(params.merge(:username => self.username))
-    self.deserialize(response, :as => Iknow::Item)
+    self.deserialize(response, :as => Iknow::Item) || []
   end
 
   def lists(params = {})
-    return @lists if @lists
-
     response = Iknow::RestClient::User.lists(params.merge(:username => self.username))
-    self.deserialize(response, :as => Iknow::List)
+    self.deserialize(response, :as => Iknow::List) || []
   end
 
   def friends(params = {})
-    return @friends if @friends
-
     response = Iknow::RestClient::User.friends(params.merge(:username => self.username))
-    self.deserialize(response)
+    self.deserialize(response) || []
   end
 
-  def study_results(params = {})
-    return @study_results if @study_results
-
-    params[:application] ||= :iknow
+  def study(params = {})
+    params[:application] ||= 'iknow'
     response = Iknow::RestClient::User.study_results(params.merge(:username => self.username))
-    self.deserialize(response, :as => Iknow::User::StudyResult)
+    self.deserialize(response, :as => Iknow::User::Study)
   end
 
 end

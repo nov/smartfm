@@ -2,8 +2,9 @@ require 'rubygems'
 require 'iknow'
 
 Iknow::Config.init do |conf|
-  conf.api_key = "" # Set your iKnow! API key, here.
-  conf.host    = "api.iknow.co.jp"
+  conf.api_key               = 'yarpp3tnrk77qx9vwwjnpt42'
+  conf.oauth_consumer_key    = ''
+  conf.oauth_consumer_secret = ''
 end
 
 please_get_api_key =<<EOS
@@ -16,7 +17,11 @@ iKnow! Developers (http://developer.iknow.co.jp/)
 Thanks!
 EOS
 
-raise ArgumentError.new(please_get_api_key) if Iknow::Config.instance.api_key == ''
+if Iknow::Config.api_key == ''# or
+  # Iknow::Config.oauth_consumer_key == '' or
+  # Iknow::Config.oauth_consumer_secret == ''
+  raise ArgumentError.new(please_get_api_key)
+end
 
 ## User API
 @user = Iknow::User.find('matake')

@@ -5,7 +5,7 @@
 == Description
 
   This rubygem is a wrapper of iKnow! API.
-  You can get pure-ruby example at example/pure_ruby.rb.
+  You can get pure-ruby example at examples/pure_ruby.rb.
 
 == Installation
 

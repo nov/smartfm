@@ -26,19 +26,19 @@ class Iknow::Item < Iknow::Base
 
   def self.recent(params = {})
     response = Iknow::RestClient::Item.recent(params)
-    self.deserialize(response)
+    self.deserialize(response) || []
   end
 
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
     response = Iknow::RestClient::Item.matching(params)
-    self.deserialize(response)
+    self.deserialize(response) || []
   end
 
   def self.extract(text, params = {})
     params[:text] = text
     response = Iknow::RestClient::Item.extract(params)
-    self.deserialize(response)
+    self.deserialize(response) || []
   end
 
   def initialize(params = {})

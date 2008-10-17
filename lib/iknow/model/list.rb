@@ -8,13 +8,13 @@ class Iknow::List < Iknow::Base
 
   def self.recent(params = {})
     response = Iknow::RestClient::List.recent(params)
-    self.deserialize(response)
+    self.deserialize(response) || []
   end
 
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
     response = Iknow::RestClient::List.matching(params)
-    self.deserialize(response)
+    self.deserialize(response) || []
   end
 
   def self.create(params = {})
@@ -30,19 +30,13 @@ class Iknow::List < Iknow::Base
   end
 
   def items(params = {})
-    return @items if @items
-
     response = Iknow::RestClient::List.items(params.merge(:id => self.list_id))
-    @items = self.deserialize(response, :as => Iknow::Item)
-    @items
+    self.deserialize(response, :as => Iknow::Item) || []
   end
 
   def sentences(params = {})
-    return @sentences if @sentences
-
     response = Iknow::RestClient::List.sentences(params.merge(:id => self.list_id))
-    @sentences = self.deserialize(response, :as => Iknow::Sentence)
-    @sentences
+    self.deserialize(response, :as => Iknow::Sentence) || []
   end
 
   def save!
