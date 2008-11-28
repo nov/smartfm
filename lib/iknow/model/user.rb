@@ -7,19 +7,19 @@ class Iknow::User < Iknow::Base
     attr_reader *ATTRIBUTES
 
     def initialize(params = {})
-      @name        = params['name']
-      @gender      = params['gender']
-      @birthday    = (Date.parse(params['birthday']) rescue nil)
-      @description = params['description']
-      @blog_url    = params['blog_url']
-      @profile_url = params['profile_url']
-      @foaf_url    = params['foaf_url']
-      @icon_url    = params['icon_url']
+      @name        = params[:name]
+      @gender      = params[:gender]
+      @birthday    = (Date.parse(params[:birthday]) rescue nil)
+      @description = params[:description]
+      @blog_url    = params[:blog_url]
+      @profile_url = params[:profile_url]
+      @foaf_url    = params[:foaf_url]
+      @icon_url    = params[:icon_url]
     end
   end
 
   class Study < Iknow::Base
-    ATTRIBUTES = [:today, :results]
+    ATTRIBUTES = [:today, :results, :total_summary]
     attr_reader *ATTRIBUTES
 
     class Result < Iknow::Base
@@ -27,28 +27,43 @@ class Iknow::User < Iknow::Base
       attr_reader *ATTRIBUTES
 
       def initialize(params = {})
-        @timestamp = (params['timestamp'].to_i   rescue nil)
-        @seconds   = (params['seconds'].to_i     rescue nil)
+        @timestamp = (params[:timestamp].to_i   rescue nil)
+        @seconds   = (params[:seconds].to_i     rescue nil)
         @totals    = {
-          :seconds   => (params['totals']['seconds'].to_i   rescue nil),
-          :seen      => (params['totals']['seen'].to_i      rescue nil),
-          :completed => (params['totals']['completed'].to_i rescue nil)
+          :seconds   => (params[:totals][:seconds].to_i   rescue nil),
+          :seen      => (params[:totals][:seen].to_i      rescue nil),
+          :completed => (params[:totals][:completed].to_i rescue nil)
         }
-        @seen      = (params['seen'].to_i        rescue nil)
-        @completed = (params['completed'].to_i   rescue nil)
-        @date      = (Date.parse(params['date']) rescue nil)
+        @seen      = (params[:seen].to_i        rescue nil)
+        @completed = (params[:completed].to_i   rescue nil)
+        @date      = (Date.parse(params[:date]) rescue nil)
+      end
+    end
+
+    class TotalSummary < Iknow::Base
+      ATTRIBUTES = [:studied, :completed, :performance, :best_speed, :best_score]
+      attr_reader *ATTRIBUTES
+
+      def initialize(params = {})
+        @studied     = params[:studied]
+        @completed   = params[:completed]
+        @performance = params[:performance]
+        @best_speed  = params[:best_speed]
+        @best_score  = params[:best_score]
       end
     end
 
     def initialize(params = {})
-      @today   = (Date.parse(params['today']) rescue nil)
-      @results = self.deserialize(params['study_results'], :as => Iknow::User::Study::Result)
+      @today         = (Date.parse(params[:today]) rescue nil)
+      @results       = self.deserialize(params[:study_results], :as => Iknow::User::Study::Result)
+      @total_summary = self.deserialize(params[:total_summary], :as => Iknow::User::Study::TotalSummary)
     end
 
   end
 
-  def self.find(username)
-    response = Iknow::RestClient::User.find(:username => username)
+  def self.find(username, params = {})
+    params[:username] = username
+    response = Iknow::RestClient::User.find(params)
     self.deserialize(response)
   end
 
@@ -59,8 +74,8 @@ class Iknow::User < Iknow::Base
   end
 
   def initialize(params)
-    @profile  = Profile.new(params['profile'])
-    @username = params['username']
+    @profile  = Profile.new(params[:profile])
+    @username = params[:username]
   end
 
   def items(params = {})

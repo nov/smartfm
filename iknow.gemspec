@@ -1,10 +1,10 @@
 Gem::Specification.new do |s|
   s.name = %q{iknow}
-  s.version = "0.0.3"
+  s.version = "0.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nov"]
-  s.date = %q{2008-10-18}
+  s.date = %q{2008-11-29}
   s.description = %q{A rubygem for iKnow! APIs}
   s.email = %q{developer@iknow.co.jp}
   s.extra_rdoc_files = ["README", "ChangeLog"]

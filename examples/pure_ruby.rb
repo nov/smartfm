@@ -2,9 +2,9 @@ require 'rubygems'
 require 'iknow'
 
 Iknow::Config.init do |conf|
-  conf.api_key               = ''
-  conf.oauth_consumer_key    = ''
-  conf.oauth_consumer_secret = ''
+  conf.api_key               = 'SET_YOUR_API_KEY'
+  conf.oauth_consumer_key    = 'SET_YOUR_OAUTH_CONSUMER_KEY'
+  conf.oauth_consumer_secret = 'SET_YOUR_OAUTH_CONSUMER_SECRET'
 end
 
 please_get_api_key =<<EOS
@@ -24,25 +24,29 @@ if Iknow::Config.api_key == ''# or
 end
 
 ## User API
-@user = Iknow::User.find('matake')
-@user.items
+@user = Iknow::User.find('kirk')
+@user.items(:include_sentences => true)
 @user.lists
 @user.friends
 @user.study.results
-@matchied_users = Iknow::User.matching('matake')
+@matched_users = Iknow::User.matching('matake')
 
-# ## List API
+## List API
 @recent_lists = Iknow::List.recent
-@matchied_lists = Iknow::List.matching("遺伝的アルゴリズム")
-@matchied_lists.first.items
-@matchied_lists.first.sentences
+@list = Iknow::List.find(31509, :include_sentences => true, :include_items => true)
+@list.items
+@list.sentences
+@matched_lists = Iknow::List.matching("イタリア語であいさつ")
 
-# ## Item API
-@recent_items = Iknow::Item.recent
-@matchied_items = Iknow::Item.matching('record')
+# puts Iknow::List.find(31509, :include_sentences => true, :include_items => true).inspect
+
+## Item API
+@recent_items = Iknow::Item.recent(:include_sentences => true)
+@matched_items = Iknow::Item.matching('record', :include_sentences => true)
 @items = Iknow::Item.extract("sometimes, often, electrical")
 @items.first.sentences
 
 ## Sentence API
 @recent_sentences = Iknow::Sentence.recent
-@matchied_sentences = Iknow::Sentence.matching('record')
+@sentence = Iknow::Sentence.find(312271)
+@matched_sentences = Iknow::Sentence.matching('record')

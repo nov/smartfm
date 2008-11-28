@@ -3,24 +3,27 @@ class Iknow::Item < Iknow::Base
   attr_reader *ATTRIBUTES
 
   class Response
-    ATTRIBUTES = [:text]
+    ATTRIBUTES = [:text, :type, :language]
     attr_reader *ATTRIBUTES
     
     def initialize(params = {})
-      @text = params['text']
+      @text     = params[:text]
+      @type     = params[:type]
+      @language = params[:language]
     end
   end
 
   class Cue
-    ATTRIBUTES = [:sound, :part_of_speech, :text]
+    ATTRIBUTES = [:text, :sound, :part_of_speech, :language]
     NOT_WRITABLE_ATTRIBUTES = [:text]
     attr_accessor *(ATTRIBUTES - NOT_WRITABLE_ATTRIBUTES)
     attr_reader *NOT_WRITABLE_ATTRIBUTES
     
     def initialize(params = {})
-      @text  = params['text']
-      @sound = params['sound']
-      @image = params['part_of_speech']
+      @text           = params[:text]
+      @sound          = params[:sound]
+      @part_of_speech = params[:part_of_speech]
+      @language       = params[:language]
     end
   end
 
@@ -42,13 +45,10 @@ class Iknow::Item < Iknow::Base
   end
 
   def initialize(params = {})
-    @id = params['id'].to_i
-    @sentences = []
-    params['sentences'].each do |sentence|
-      @sentences << Iknow::Sentence.new(sentence)
-    end
-    @response = params['response'] ? Iknow::Item::Response.new(params['response']) : nil
-    @cue      = Iknow::Item::Cue.new(params['cue'])
+    @id        = params[:id].to_i
+    @cue       = self.deserialize(params[:cue], :as => Iknow::Item::Cue)
+    @responses = self.deserialize(params[:responses], :as => Iknow::Item::Response)
+    @sentences = self.deserialize(params[:sentences], :as => Iknow::Sentence)
   end
 
 end

@@ -2,6 +2,7 @@ class Iknow::RestClient::Sentence < Iknow::RestClient::Base
   
   ACTIONS = {
     :recent    => { :path => '/sentences'                                      },
+    :find      => { :path => '/sentences/__id__'                               },
     :matching  => { :path => '/sentences/matching/__keyword__'                 },
     :create    => { :path => '/sentences',               :http_method => :post },
     :add_image => { :path => '/sentences/__id__/images', :http_method => :post },

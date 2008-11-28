@@ -2,6 +2,7 @@ class Iknow::RestClient::List < Iknow::RestClient::Base
   
   ACTIONS = {
     :recent    => { :path => '/lists'                                 },
+    :find      => { :path => '/lists/__id__'                          },
     :items     => { :path => '/lists/__id__/items'                    },
     :sentences => { :path => '/lists/__id__/sentences'                },
     :matching  => { :path => '/lists/matching/__keyword__'            },
