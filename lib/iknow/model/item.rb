@@ -32,6 +32,12 @@ class Iknow::Item < Iknow::Base
     self.deserialize(response) || []
   end
 
+  def self.find(item_id, params = {})
+    params[:id] = item_id
+    response = Iknow::RestClient::Item.find(params)
+    self.deserialize(response)
+  end
+
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
     response = Iknow::RestClient::Item.matching(params)

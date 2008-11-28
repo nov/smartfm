@@ -29,6 +29,7 @@ end
 @user.lists
 @user.friends
 @user.study.results
+@user.study.total_results
 @matched_users = Iknow::User.matching('matake')
 
 ## List API
@@ -42,6 +43,7 @@ end
 
 ## Item API
 @recent_items = Iknow::Item.recent(:include_sentences => true)
+@item = Iknow::Item.find(437525)
 @matched_items = Iknow::Item.matching('record', :include_sentences => true)
 @items = Iknow::Item.extract("sometimes, often, electrical")
 @items.first.sentences

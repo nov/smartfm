@@ -26,15 +26,15 @@ Gem::Specification.new do |s|
     if current_version >= 3 then
       s.add_runtime_dependency(%q<rails>, [">= 2.1.0"])
       s.add_runtime_dependency(%q<json>, [">= 0"])
-      s.add_runtime_dependency(%q<oauth>, ["= 0.2.4"])
+      s.add_runtime_dependency(%q<oauth>, [">= 0.2.4"])
     else
       s.add_dependency(%q<rails>, [">= 2.1.0"])
       s.add_dependency(%q<json>, [">= 0"])
-      s.add_dependency(%q<oauth>, ["= 0.2.4"])
+      s.add_dependency(%q<oauth>, [">= 0.2.4"])
     end
   else
     s.add_dependency(%q<rails>, [">= 2.1.0"])
     s.add_dependency(%q<json>, [">= 0"])
-    s.add_dependency(%q<oauth>, ["= 0.2.4"])
+    s.add_dependency(%q<oauth>, [">= 0.2.4"])
   end
 end
