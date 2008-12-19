@@ -10,3 +10,8 @@
 
 * add new API calls
 * add new attributes
+
+== 0.1.0
+
+* add Iknow::Auth (supports basic_auth and oauth)
+* add List#create, List#delete, List#add_item, List#delete_item
