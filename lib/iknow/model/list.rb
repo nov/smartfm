@@ -14,11 +14,11 @@
 #     "author_url": "http://www.iknow.co.jp/user/Cerego"
 
 class Iknow::List < Iknow::Base
-  ATTRIBUTES = [:list_id, :title, :description, :icon, :item_count, :user_count, :iknow, :dictation, :brainspeed,
+  ATTRIBUTES = [:id, :title, :description, :icon, :item_count, :user_count, :iknow, :dictation, :brainspeed,
                 :language, :translation_language, :list_type, :transcript, :embed,
                 :tags, :media_entry, :author, :author_id, :author_url, :attribution_license_id,
                 :items, :sentences]
-  NOT_WRITABLE_ATTRIBUTES = [:list_id, :icon, :item_count, :user_count, :iknow, :dictation, :brainspeed]
+  NOT_WRITABLE_ATTRIBUTES = [:id, :icon, :item_count, :user_count, :iknow, :dictation, :brainspeed]
   attr_accessor *(ATTRIBUTES - NOT_WRITABLE_ATTRIBUTES)
   attr_reader   *NOT_WRITABLE_ATTRIBUTES
 
@@ -51,13 +51,16 @@ class Iknow::List < Iknow::Base
     self.deserialize(response) || []
   end
 
-  def self.create(params = {})
-    new_list = self.new(params)
-    new_list.save!
+  def self.create(iknow_auth, params = {})
+    self.new(params).save(iknow_auth)
+  end
+
+  def self.delete(list_id)
+    self.find(list_id).delete
   end
 
   def initialize(params = {})
-    @list_id     = (params[:id].to_i rescue nil)
+    @id          = (params[:id].to_i rescue nil)
     @title       = params[:title]
     @description = params[:description]
     @icon        = params[:icon]
@@ -66,7 +69,7 @@ class Iknow::List < Iknow::Base
     @language    = params[:language]
     @translation_language = params[:translation_language]
     if @list_id and @translation_language
-      common_settings = {:list_id => @list_id, :lang => @translation_language}
+      common_settings = {:list_id => @id, :lang => @translation_language}
       @iknow      = Application.new(common_settings.merge(:application => 'iknow'))      if params[:iknow]
       @dictation  = Application.new(common_settings.merge(:application => 'dictation'))  if params[:dictation]
       @brainspeed = Application.new(common_settings.merge(:application => 'brainspeed')) if params[:brainspeed]
@@ -85,24 +88,35 @@ class Iknow::List < Iknow::Base
   end
 
   def items(params = {})
-    response = Iknow::RestClient::List.items(params.merge(:id => self.list_id))
+    response = Iknow::RestClient::List.items(params.merge(:id => self.id))
     self.deserialize(response, :as => Iknow::Item) || []
   end
 
   def sentences(params = {})
-    response = Iknow::RestClient::List.sentences(params.merge(:id => self.list_id))
+    response = Iknow::RestClient::List.sentences(params.merge(:id => self.id))
     self.deserialize(response, :as => Iknow::Sentence) || []
   end
 
-  def save!
-    Iknow::RestClient::List.create(self.to_post_data)
+  def save(iknow_auth)
+    begin
+      list_id = Iknow::RestClient::List.create(iknow_auth, self.to_post_data)
+    rescue
+      return false
+    end
+    Iknow::List.find(list_id)
   end
 
-  def save
-    self.save!
-    true
-  rescue
-    false
+  def delete(iknow_auth)
+    Iknow::RestClient::List.delete(iknow_auth, :id => self.id)
+  end
+  alias_method :destroy, :delete
+
+  def add_item(iknow_auth, item)
+    Iknow::RestClient::List.add_item(iknow_auth, {:list_id => self.id, :id => item.id})
+  end
+
+  def delete_item(iknow_auth, item)
+    Iknow::RestClient::List.delete_item(iknow_auth, {:list_id => self.id, :id => item.id})
   end
 
   protected
@@ -116,11 +130,10 @@ class Iknow::List < Iknow::Base
       'list[language]'             => self.language             || 'en',
       'list[translation_language]' => self.translation_language || 'ja'
     }
-    # Object#type should not be used
+    # Optional attributes
     if self.list_type
       post_data['list[type]'] = self.list_type
     end
-    # Optional attributes
     [ :transcript, :embed, :tags, :media_entry,
       :author, :author_url, :attribution_license_id ].each do |key|
       if self.send("#{key}")

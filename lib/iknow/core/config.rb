@@ -20,7 +20,7 @@ class Iknow::Config
       :user_agent            => 'default',
       :application_name      => 'A rubygem for iKnow! API',
       :application_version   => Iknow::Version.to_version,
-      :application_url       => 'http://github.com/nov/iknow_oauth_generator',
+      :application_url       => 'http://github.com/nov/iknow',
       :source                => 'iknow'
     }.each do |key, value| conf.send("#{key}=", value) end
     yield conf if block_given?

@@ -62,11 +62,12 @@ spec = Gem::Specification.new do |s|
 
 	s.add_dependency('rails', '>=2.1.0')
 	s.add_dependency('json')
-	s.add_dependency('oauth', '>=0.2.4')
+	s.add_dependency('mechanize')
+	s.add_dependency('oauth', '>=0.2.7')
 	s.required_ruby_version = '>= 1.8.6'
 
 	s.files = %w(README ChangeLog Rakefile) +
-		Dir.glob("{bin,doc,test,lib,templates,generators,extras,website,script}/**/*") + 
+		Dir.glob("{bin,doc,test,lib,templates,extras,website,script}/**/*") + 
 		Dir.glob("ext/**/*.{h,c,rb}") +
 		Dir.glob("examples/**/*.rb") +
 		Dir.glob("tools/*.rb") +
@@ -80,12 +81,14 @@ Rake::GemPackageTask.new(spec) do |p|
 	p.gem_spec = spec
 end
 
+desc "Install"
 task :install do
 	name = "#{NAME}-#{VERS}.gem"
 	sh %{rake package}
 	sh %{sudo gem install pkg/#{name}}
 end
 
+desc "Uninstall"
 task :uninstall => [:clean] do
 	sh %{sudo gem uninstall #{NAME}}
 end

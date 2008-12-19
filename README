@@ -6,6 +6,9 @@
 
   This rubygem is a wrapper of iKnow! API.
   You can get pure-ruby example at examples/pure_ruby.rb.
+  http://github.com/nov/iknow/tree/master/examples/pure_ruby.rb
+  
+  It shows all API calls you can use with this gem.
 
 == Installation
 
@@ -19,7 +22,7 @@
 
 === Gem Installation
 
-	gem install nov-iknow 
+	gem install iknow
 
 == Features/Problems
 
@@ -29,31 +32,9 @@
   They will be implemented in a few weeks.
   
   iKnow! OAuth is still pre-alpha.
-  Wait a few weeks to use it, please.
 
 == Synopsis
-
-  % rails iknow_on_rails
-  % cd iknow_on_rails
-  % ./script/generate iknow_oauth
-  % rake db:create
-  % rake db:migrate
   
-  and edit environment.rb like examples/iknow_on_rails
-  and add some controllers and views like examples/iknow_on_rails
-  and go http://localhost:3000/
-  
-  You can run examples/iknow_on_rails
-  
-  1. DOWNLOAD THIS GEM
-  
-  2. Run the example
-    % cd iknow/examples/iknow_on_rails (cd nov-iknow/examples/iknow_on_rails ??)
-    % rake db:create
-    % rake db:migrate
-    % ./script/server
-
-  About Another things
   See examples and iKnow! Developers, please.
   iKnow! Developers (http://developer.iknow.co.jp)
 
