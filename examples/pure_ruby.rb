@@ -91,8 +91,5 @@ end
 
 @list = Iknow::List.create(iknow_auth, :title => 'iKnow! gem test', :description => 'A list for iKnow! gem test')
 @list.add_item(iknow_auth, Iknow::Item.find(437525))
-unless OAUTH_ACCESS_TOKEN.empty?
-  # A kind of weird, only with basic auth...
-  @list.delete_item(iknow_auth, @list.items.first)
-end
+@list.delete_item(iknow_auth, @list.items.first)
 @list.delete(iknow_auth)
