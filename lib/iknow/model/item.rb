@@ -1,5 +1,5 @@
 class Iknow::Item < Iknow::Base
-  ATTRIBUTES = [:sentences, :response, :cue, :id]
+  ATTRIBUTES = [:sentences, :hash, :cue, :id]
   attr_reader *ATTRIBUTES
 
   class Response
@@ -28,32 +28,32 @@ class Iknow::Item < Iknow::Base
   end
 
   def self.recent(params = {})
-    response = Iknow::RestClient::Item.recent(params)
-    self.deserialize(response) || []
+    hash = Iknow::RestClient::Item.recent(params)
+    self.deserialize(hash) || []
   end
 
   def self.find(item_id, params = {})
     params[:id] = item_id
-    response = Iknow::RestClient::Item.find(params)
-    self.deserialize(response)
+    hash = Iknow::RestClient::Item.find(params)
+    self.deserialize(hash)
   end
 
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
-    response = Iknow::RestClient::Item.matching(params)
-    self.deserialize(response) || []
+    hash = Iknow::RestClient::Item.matching(params)
+    self.deserialize(hash) || []
   end
 
   def self.extract(text, params = {})
     params[:text] = text
-    response = Iknow::RestClient::Item.extract(params)
-    self.deserialize(response) || []
+    hash = Iknow::RestClient::Item.extract(params)
+    self.deserialize(hash) || []
   end
 
   def initialize(params = {})
     @id        = params[:id].to_i
     @cue       = self.deserialize(params[:cue], :as => Iknow::Item::Cue)
-    @responses = self.deserialize(params[:responses], :as => Iknow::Item::Response)
+    @hashs = self.deserialize(params[:hashs], :as => Iknow::Item::Response)
     @sentences = self.deserialize(params[:sentences], :as => Iknow::Sentence)
   end
 

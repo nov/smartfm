@@ -1,3 +1,5 @@
+require 'timeout'
+
 class Iknow::RestClient::Base
 
   class RESTError < Exception
@@ -24,13 +26,13 @@ class Iknow::RestClient::Base
     case self.http_method(action)
     when :get
       path, params = path_with_params(self.path(action), args[0])
-      http_get_request(path, params)
+      http_get(path, params)
     when :post
       path, params = path_with_params(self.path(action), args[1])
-      http_post_request(iknow_auth(args[0]), path, params)
+      http_post(iknow_auth(args[0]), path, params)
     when :delete
       path, params = path_with_params(self.path(action), args[1])
-      http_delete_request(iknow_auth(args[0]), path, params)
+      http_delete(iknow_auth(args[0]), path, params)
     end
   end
 
@@ -54,19 +56,54 @@ class Iknow::RestClient::Base
     raise RESTError.new(:code => response.code, :message => response.message)
   end
 
-  def self.handle_rest_response(response)
+  def self.handle_rest_response(response, format)
     raise_rest_error(response) unless response.is_a?(Net::HTTPSuccess)
+    case format
+    when :json
+      handle_json_response(response.body)
+    when :nothing
+      # success => nothing / failure => json error
+      handle_json_response(response.body) rescue :success
+    else
+      response.body
+    end
+  end
+
+  def self.handle_json_response(json_response)
+    hash = JSON.parse(json_response)
+    unless (hash['error'].nil? rescue :success) # success response may be Array, not Hash.
+      if hash['error']['code'].to_i == 404
+        return nil
+      else
+        raise RESTError.new(:code => hash['error']['code'], :message => hash['error']['message'])
+      end
+    end
+    hash
   end
 
   def self.http_header
     @@http_header ||= {
-      'User-Agent'             => "iKnow! API v#{Iknow::Version.to_version} [#{self.config.user_agent}]",
-      'Accept'                 => 'text/x-json',
-      'X-iKnow-Client'         => self.config.application_name,
-      'X-iKnow-Client-Version' => self.config.application_version,
-      'X-iKnow-Client-URL'     => self.config.application_url,
+      'User-Agent' => "#{self.config.application_name} v#{Iknow::Version.to_version} [#{self.config.user_agent}]",
+      'Accept'     => 'text/x-json',
+      'X-iKnow-Gem-Client'         => self.config.application_name,
+      'X-iKnow-Gem-Client-Version' => self.config.application_version,
+      'X-iKnow-Gem-Client-URL'     => self.config.application_url,
     }
-    @@http_header
+  end
+
+  def self.http_connect
+    http = Net::HTTP.new(self.config.api_host, self.config.api_port)
+    http.start do |conn|
+      request, format = yield
+      begin
+        timeout(self.config.timeout) do
+          response = conn.request(request)
+          handle_rest_response(response, format)
+        end
+      rescue
+        raise RESTError.new(:code => 408, :message => "iKnow! Gem Timeout (#{self.config.timeout} [sec])")
+      end
+    end
   end
 
   def self.path_with_params(path, params = {})
@@ -82,50 +119,47 @@ class Iknow::RestClient::Base
     return path_with_params, params
   end
 
-  def self.http_get_request(path, params = {})
-    params.merge!(:api_key => self.config.api_key) unless self.config.api_key == ''
-    path = (params.size > 0) ? "#{path}?#{params.to_http_str}" : path
-    http = Net::HTTP.new(self.config.api_host, self.config.api_port)
-    response = http.get(path, http_header)
-    handle_rest_response(response)
-    JSON.parse(response.body)
+  def self.http_get(path, params = {})
+    http_connect do
+      params.merge!(:api_key => self.config.api_key) unless self.config.api_key == ''
+      path = (params.size > 0) ? "#{path}?#{params.to_http_str}" : path
+      get_req = Net::HTTP::Get.new(path, http_header)
+      [get_req, :json]
+    end
   end
 
-  def self.http_post_request(iknow_auth, path, params = {})
+  def self.http_post(iknow_auth, path, params = {})
     self.api_key_required
     params.merge!(:api_key => self.config.api_key)
     case iknow_auth.mode
-    when :oauth 
+    when :oauth
       response = iknow_auth.auth_token.post(path, params, http_header)
-      handle_rest_response(response)
-      response.body
+      handle_rest_response(response, :text)
     when :basic_auth
-      begin
-        response = iknow_auth.auth_token.post(self.config.iknow_api_base_url + path, params)
-        response.body
-      rescue WWW::Mechanize::ResponseCodeError => e
-        raise RESTError.new(:code => e.response_code, :message => e.to_s)
+      http_connect do
+        post_req = Net::HTTP::Post.new(path, http_header)
+        post_req.body = params.to_http_str
+        post_req.basic_auth(iknow_auth.account.username, iknow_auth.account.password)
+        [post_req, :text]
       end
     end
   end
 
-  def self.http_delete_request(iknow_auth, path, params = {})
+  def self.http_delete(iknow_auth, path, params = {})
     self.api_key_required
     params.merge!(:api_key => self.config.api_key)
     case iknow_auth.mode
     when :oauth
       response = iknow_auth.auth_token.delete(path, params.stringfy_keys!.stringfy_values!)
-      handle_rest_response(response)
+      handle_rest_response(response, :nothing)
     when :basic_auth
-      begin
-        iknow_auth.auth_token.delete(self.config.iknow_api_base_url + path, params.stringfy_keys!)
-      rescue WWW::Mechanize::ResponseCodeError => e
-        raise RESTError.new(:code => e.response_code, :message => e.to_s)
+      http_connect do
+        delete_req = Net::HTTP::Post.new(path, http_header)
+        delete_req.body = params.merge(:_method => 'DELETE').to_http_str
+        delete_req.basic_auth(iknow_auth.account.username, iknow_auth.account.password)
+        [delete_req, :nothing]
       end
     end
   end
-
-  private_class_method :raise_rest_error, :handle_rest_response, :http_header,
-                       :path_with_params, :http_get_request, :http_post_request, :http_delete_request
 
 end

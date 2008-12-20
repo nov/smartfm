@@ -35,20 +35,20 @@ class Iknow::List < Iknow::Base
   end
 
   def self.recent(params = {})
-    response = Iknow::RestClient::List.recent(params)
-    self.deserialize(response) || []
+    hash = Iknow::RestClient::List.recent(params)
+    self.deserialize(hash) || []
   end
 
   def self.find(list_id, params = {})
     params[:id] = list_id
-    response = Iknow::RestClient::List.find(params)
-    self.deserialize(response)
+    hash = Iknow::RestClient::List.find(params)
+    self.deserialize(hash)
   end
 
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
-    response = Iknow::RestClient::List.matching(params)
-    self.deserialize(response) || []
+    hash = Iknow::RestClient::List.matching(params)
+    self.deserialize(hash) || []
   end
 
   def self.create(iknow_auth, params = {})
@@ -88,26 +88,26 @@ class Iknow::List < Iknow::Base
   end
 
   def items(params = {})
-    response = Iknow::RestClient::List.items(params.merge(:id => self.id))
-    self.deserialize(response, :as => Iknow::Item) || []
+    hash = Iknow::RestClient::List.items(params.merge(:id => self.id))
+    self.deserialize(hash, :as => Iknow::Item) || []
   end
 
   def sentences(params = {})
-    response = Iknow::RestClient::List.sentences(params.merge(:id => self.id))
-    self.deserialize(response, :as => Iknow::Sentence) || []
+    hash = Iknow::RestClient::List.sentences(params.merge(:id => self.id))
+    self.deserialize(hash, :as => Iknow::Sentence) || []
   end
 
   def save(iknow_auth)
     begin
       list_id = Iknow::RestClient::List.create(iknow_auth, self.to_post_data)
-    rescue
-      return false
+    # rescue
+    #   return false
     end
     Iknow::List.find(list_id)
   end
 
   def delete(iknow_auth)
-    Iknow::RestClient::List.delete(iknow_auth, :id => self.id)
+    Iknow::RestClient::List.delete(iknow_auth, {:id => self.id})
   end
   alias_method :destroy, :delete
 

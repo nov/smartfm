@@ -5,20 +5,20 @@ class Iknow::Sentence < Iknow::Base
   attr_reader *(ATTRIBUTES - WRITABLE_ATTRIBUTES)
 
   def self.recent(params = {})
-    response = Iknow::RestClient::Sentence.recent(params)
-    self.deserialize(response) || []
+    hash = Iknow::RestClient::Sentence.recent(params)
+    self.deserialize(hash) || []
   end
 
   def self.find(sentence_id, params = {})
     params[:id] = sentence_id
-    response = Iknow::RestClient::Sentence.find(params)
-    self.deserialize(response)
+    hash = Iknow::RestClient::Sentence.find(params)
+    self.deserialize(hash)
   end
 
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
-    response = Iknow::RestClient::Sentence.matching(params)
-    self.deserialize(response) || []
+    hash = Iknow::RestClient::Sentence.matching(params)
+    self.deserialize(hash) || []
   end
 
   def initialize(params = {})

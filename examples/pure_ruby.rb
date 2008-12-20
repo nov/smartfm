@@ -70,8 +70,8 @@ end
 ########################
 
 iknow_auth = case
-  when OAUTH_ACCESS_TOKEN != ''
-    if Iknow::Config.oauth_consumer_key == '' or Iknow::Config.oauth_consumer_secret == ''
+  when !OAUTH_ACCESS_TOKEN.empty?
+    if Iknow::Config.oauth_consumer_key.empty? or Iknow::Config.oauth_consumer_secret.empty?
       raise ArgumentError.new("oauth_consumer_key and oauth_consumer_secret are required")
     end
     Iknow::Auth.new(:token => OAUTH_ACCESS_TOKEN, :secret => OAUTH_ACCESS_TOKEN_SECRET)
@@ -83,6 +83,8 @@ iknow_auth = case
 unless iknow_auth
   puts "Skip calls which require authentication"
   exit
+else
+  puts "Authenticate Mode :: #{iknow_auth.mode}"
 end
 
 ## List API

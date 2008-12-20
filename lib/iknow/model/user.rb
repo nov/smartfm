@@ -63,14 +63,14 @@ class Iknow::User < Iknow::Base
 
   def self.find(username, params = {})
     params[:username] = username
-    response = Iknow::RestClient::User.find(params)
-    self.deserialize(response)
+    hash = Iknow::RestClient::User.find(params)
+    self.deserialize(hash)
   end
 
   def self.matching(keyword, params = {})
     params[:keyword] = keyword
-    response = Iknow::RestClient::User.matching(params)
-    self.deserialize(response) || []
+    hash = Iknow::RestClient::User.matching(params)
+    self.deserialize(hash) || []
   end
 
   def initialize(params)
@@ -79,24 +79,24 @@ class Iknow::User < Iknow::Base
   end
 
   def items(params = {})
-    response = Iknow::RestClient::User.items(params.merge(:username => self.username))
-    self.deserialize(response, :as => Iknow::Item) || []
+    hash = Iknow::RestClient::User.items(params.merge(:username => self.username))
+    self.deserialize(hash, :as => Iknow::Item) || []
   end
 
   def lists(params = {})
-    response = Iknow::RestClient::User.lists(params.merge(:username => self.username))
-    self.deserialize(response, :as => Iknow::List) || []
+    hash = Iknow::RestClient::User.lists(params.merge(:username => self.username))
+    self.deserialize(hash, :as => Iknow::List) || []
   end
 
   def friends(params = {})
-    response = Iknow::RestClient::User.friends(params.merge(:username => self.username))
-    self.deserialize(response) || []
+    hash = Iknow::RestClient::User.friends(params.merge(:username => self.username))
+    self.deserialize(hash) || []
   end
 
   def study(params = {})
     params[:application] ||= 'iknow'
-    response = Iknow::RestClient::User.study_results(params.merge(:username => self.username))
-    self.deserialize(response, :as => Iknow::User::Study)
+    hash = Iknow::RestClient::User.study_results(params.merge(:username => self.username))
+    self.deserialize(hash, :as => Iknow::User::Study)
   end
 
 end

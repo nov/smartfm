@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{iknow}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nov"]
-  s.date = %q{2008-12-19}
+  s.date = %q{2008-12-20}
   s.description = %q{A rubygem for iKnow! APIs}
   s.email = %q{developer@iknow.co.jp}
   s.extra_rdoc_files = ["README", "ChangeLog"]
@@ -28,18 +28,15 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rails>, [">= 2.1.0"])
       s.add_runtime_dependency(%q<json>, [">= 0"])
-      s.add_runtime_dependency(%q<mechanize>, [">= 0"])
       s.add_runtime_dependency(%q<oauth>, [">= 0.2.7"])
     else
       s.add_dependency(%q<rails>, [">= 2.1.0"])
       s.add_dependency(%q<json>, [">= 0"])
-      s.add_dependency(%q<mechanize>, [">= 0"])
       s.add_dependency(%q<oauth>, [">= 0.2.7"])
     end
   else
     s.add_dependency(%q<rails>, [">= 2.1.0"])
     s.add_dependency(%q<json>, [">= 0"])
-    s.add_dependency(%q<mechanize>, [">= 0"])
     s.add_dependency(%q<oauth>, [">= 0.2.7"])
   end
 end

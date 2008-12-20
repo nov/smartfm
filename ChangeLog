@@ -15,3 +15,7 @@
 
 * add Iknow::Auth (supports basic_auth and oauth)
 * add List#create, List#delete, List#add_item, List#delete_item
+
+== 0.1.1
+
+* remove Mechanize

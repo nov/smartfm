@@ -62,7 +62,6 @@ spec = Gem::Specification.new do |s|
 
 	s.add_dependency('rails', '>=2.1.0')
 	s.add_dependency('json')
-	s.add_dependency('mechanize')
 	s.add_dependency('oauth', '>=0.2.7')
 	s.required_ruby_version = '>= 1.8.6'
 
@@ -114,6 +113,7 @@ task :rubyforge => [:rdoc, :package] do
 	Rake::RubyForgePublisher.new(RUBYFORGE_PROJECT, 'nov').upload
 end
 
+# rake release VERSION=x.y.z
 desc 'Package and upload the release to rubyforge.'
 task :release => [:clean, :package] do |t|
 	v = ENV["VERSION"] or abort "Must supply VERSION=x.y.z"

@@ -4,26 +4,23 @@ class Iknow::Base
 
   def attributes; self.class.attributes  end
 
-  def self.deserialize(response, params = {})
-    return nil if response.nil? or
-                 (response.is_a?(Hash) and
-                 !response['error'].nil? and
-                  response['error']['code'].to_i == 404)
+  def self.deserialize(hash, params = {})
+    return nil if hash.nil?
 
     klass = params[:as] ? params[:as] : self
-    if response.is_a?(Array)
-      response.inject([]) { |results, hash|
+    if hash.is_a?(Array)
+      hash.inject([]) { |results, hash|
         hash.symbolize_keys!
         results << klass.new(hash)
       }
     else
-      response.symbolize_keys!
-      klass.new(response)
+      hash.symbolize_keys!
+      klass.new(hash)
     end
   end
 
-  def deserialize(response, params = {})
-    self.class.deserialize(response, params)
+  def deserialize(hash, params = {})
+    self.class.deserialize(hash, params)
   end
 
 end

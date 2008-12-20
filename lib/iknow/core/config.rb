@@ -2,7 +2,7 @@ require 'singleton'
 
 class Iknow::Config
   include Singleton
-  attr_accessor :protocol, :host, :port, :api_protocol, :api_host, :api_port,
+  attr_accessor :protocol, :host, :port, :api_protocol, :api_host, :api_port, :timeout,
                 :api_key, :oauth_consumer_key, :oauth_consumer_secret,
                 :user_agent, :application_name, :application_version, :application_url, :source
 
@@ -14,14 +14,14 @@ class Iknow::Config
       :api_protocol          => 'http',
       :api_host              => 'api.iknow.co.jp',
       :api_port              => 80,
+      :timeout               => 5,
       :api_key               => '',
       :oauth_consumer_key    => '',
       :oauth_consumer_secret => '',
       :user_agent            => 'default',
-      :application_name      => 'A rubygem for iKnow! API',
+      :application_name      => 'iKnow! Gem',
       :application_version   => Iknow::Version.to_version,
-      :application_url       => 'http://github.com/nov/iknow',
-      :source                => 'iknow'
+      :application_url       => 'http://github.com/nov/iknow'
     }.each do |key, value| conf.send("#{key}=", value) end
     yield conf if block_given?
     conf
