@@ -7,6 +7,7 @@ Iknow::Config.init do |conf|
   conf.api_key               = '' # 'SET_YOUR_API_KEY'
   conf.oauth_consumer_key    = '' # 'SET_YOUR_OAUTH_CONSUMER_KEY'
   conf.oauth_consumer_secret = '' # 'SET_YOUR_OAUTH_CONSUMER_SECRET'
+  conf.timeout               = 15
 end
 
 # Edit here
@@ -36,7 +37,10 @@ end
 ## WITHOUT AUTHORIZATION ##
 ###########################
 
+puts "WITHOUT AUTHORIZATION"
+
 ## User API
+puts "# User API Calls"
 @user = Iknow::User.find('kirk')
 @user.items(:include_sentences => true)
 @user.lists
@@ -46,6 +50,7 @@ end
 @matched_users = Iknow::User.matching('matake')
 
 ## List API
+puts "# List API Calls"
 @recent_lists = Iknow::List.recent
 @list = Iknow::List.find(31509, :include_sentences => true, :include_items => true)
 @list.items
@@ -53,6 +58,7 @@ end
 @matched_lists = Iknow::List.matching("イタリア語であいさつ")
 
 ## Item API
+puts "# Item API Calls"
 @recent_items = Iknow::Item.recent(:include_sentences => true)
 @item = Iknow::Item.find(437525)
 @matched_items = Iknow::Item.matching('record', :include_sentences => true)
@@ -60,6 +66,7 @@ end
 @items.first.sentences
 
 ## Sentence API
+puts "# Sentence API Calls"
 @recent_sentences = Iknow::Sentence.recent
 @sentence = Iknow::Sentence.find(312271)
 @matched_sentences = Iknow::Sentence.matching('record')
@@ -84,11 +91,14 @@ unless iknow_auth
   puts "Skip calls which require authentication"
   exit
 else
-  puts "Authenticate Mode :: #{iknow_auth.mode}"
+  puts "## WITH AUTHORIZATION :: #{iknow_auth.mode}"
 end
+
+
 
 ## List API
 
+puts "# List API"
 @list = Iknow::List.create(iknow_auth, :title => 'iKnow! gem test', :description => 'A list for iKnow! gem test')
 @list.add_item(iknow_auth, Iknow::Item.find(437525))
 @list.delete_item(iknow_auth, @list.items.first)

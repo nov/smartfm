@@ -14,7 +14,7 @@ class Iknow::Config
       :api_protocol          => 'http',
       :api_host              => 'api.iknow.co.jp',
       :api_port              => 80,
-      :timeout               => 5,
+      :timeout               => 30,
       :api_key               => '',
       :oauth_consumer_key    => '',
       :oauth_consumer_secret => '',
