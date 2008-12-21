@@ -94,12 +94,23 @@ else
   puts "## WITH AUTHORIZATION :: #{iknow_auth.mode}"
 end
 
-
-
 ## List API
-
 puts "# List API"
 @list = Iknow::List.create(iknow_auth, :title => 'iKnow! gem test', :description => 'A list for iKnow! gem test')
 @list.add_item(iknow_auth, Iknow::Item.find(437525))
 @list.delete_item(iknow_auth, @list.items.first)
 @list.delete(iknow_auth)
+
+## Item API
+puts "# Item API"
+@item = Iknow::Item.create(iknow_auth, :cue => {:text => 'hello world! 2', :language => 'en', :part_of_speech => 'E'}, 
+                                       :response => {:text => 'ハローワールド！', :language => 'ja'})
+@item.add_image(iknow_auth, 'http://farm4.static.flickr.com/3276/3102381796_a33c1ffdf1.jpg')
+@item.add_sound(iknow_auth, 'http://matake.jp/download/hello_world.mp3')
+@item.add_tags(iknow_auth, 'sample', 'programming')
+
+## Sentence API
+puts "# Sentence API"
+@sentence = Iknow::Sentence.create(iknow_auth, :text => 'Hello World!', :item => Iknow::Item.matching('hello world').first)
+@sentence.add_image(iknow_auth, 'http://farm4.static.flickr.com/3276/3102381796_a33c1ffdf1.jpg')
+@sentence.add_sound(iknow_auth, 'http://matake.jp/download/hello_world.mp3')

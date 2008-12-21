@@ -18,9 +18,9 @@ class Iknow::List < Iknow::Base
                 :language, :translation_language, :list_type, :transcript, :embed,
                 :tags, :media_entry, :author, :author_id, :author_url, :attribution_license_id,
                 :items, :sentences]
-  NOT_WRITABLE_ATTRIBUTES = [:id, :icon, :item_count, :user_count, :iknow, :dictation, :brainspeed]
-  attr_accessor *(ATTRIBUTES - NOT_WRITABLE_ATTRIBUTES)
-  attr_reader   *NOT_WRITABLE_ATTRIBUTES
+  READONLY_ATTRIBUTES = [:id, :icon, :item_count, :user_count, :iknow, :dictation, :brainspeed]
+  attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
+  attr_reader   *READONLY_ATTRIBUTES
 
   class Application
     attr_reader :application, :list_id, :lang
@@ -100,8 +100,8 @@ class Iknow::List < Iknow::Base
   def save(iknow_auth)
     begin
       list_id = Iknow::RestClient::List.create(iknow_auth, self.to_post_data)
-    # rescue
-    #   return false
+    rescue
+      return false
     end
     Iknow::List.find(list_id)
   end
@@ -122,8 +122,7 @@ class Iknow::List < Iknow::Base
   protected
 
   def to_post_data
-    raise ArgumentError.new("List title is needed.") if self.title.nil? or self.title.empty?
-    
+    self.validate
     post_data = {
       'list[name]'                 => self.title,
       'list[description]'          => self.description,
@@ -141,6 +140,11 @@ class Iknow::List < Iknow::Base
       end
     end
     post_data
+  end
+
+  def validate
+    raise ArgumentError.new("List title is required.")       if self.title.nil?       or self.title.empty?
+    raise ArgumentError.new("List description is required.") if self.description.nil? or self.description.empty?
   end
 
 end

@@ -63,16 +63,24 @@ class Iknow::RestClient::Base
       handle_json_response(response.body)
     when :nothing
       # success => nothing / failure => json error
-      handle_json_response(response.body) rescue :success
-    else
-      response.body
+      begin
+        handle_json_response(response.body)
+      rescue Exception => e
+        e.is_a?(RESTError) ? raise(e) : :success
+      end
+    else  
+      begin
+        handle_json_response(response.body)
+      rescue Exception => e
+        e.is_a?(RESTError) ? raise(e) : response.body
+      end
     end
   end
 
   def self.handle_json_response(json_response)
     hash = JSON.parse(json_response)
     unless (hash['error'].nil? rescue :success) # success response may be Array, not Hash.
-      if hash['error']['code'].to_i == 404
+      if hash['error']['code'] == 404
         return nil
       else
         raise RESTError.new(:code => hash['error']['code'], :message => hash['error']['message'])
@@ -111,7 +119,7 @@ class Iknow::RestClient::Base
     unless params.empty?
       params.each do |key, value|
         if path_with_params=~/__#{key}__/
-          path_with_params.sub!(/__#{key}__/, value.to_s)
+          path_with_params.sub!(/__#{key}__/, URI.encode(value.to_s))
           params.delete(key)
         end
       end
