@@ -19,3 +19,7 @@
 == 0.1.1
 
 * remove Mechanize
+
+== 0.2.0
+
+* support almost all API calls
