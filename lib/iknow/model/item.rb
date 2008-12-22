@@ -78,20 +78,46 @@ class Iknow::Item < Iknow::Base
 
   def add_image(iknow_auth, params)
     post_params = if params.is_a?(String)
-      {'image[url]' => params,}
+      { 'image[url]' => params }
     else
-      {'image[url]' => params[:url],
-       'image[list_id]' => params[:list_id] }
+      image_params = { 
+        'image[url]'     => params[:url],
+        'image[list_id]' => params[:list_id]
+      }
+      if params[:attribution]
+        attribution_params = { 
+          'attribution[media_entity]'           => params[:attribution][:media_entity],
+          'attribution[author]'                 => params[:attribution][:media_entity],
+          'attribution[author_url]'             => params[:attribution][:media_entity],
+          'attribution[attribution_license_id]' => params[:attribution][:media_entity]
+        }
+        image_params.merge(attribution_params)
+      else
+        image_params
+      end
     end
     Iknow::RestClient::Item.add_image(iknow_auth, post_params.merge(:id => self.id))
   end
 
   def add_sound(iknow_auth, params)
     post_params = if params.is_a?(String)
-      {'sound[url]' => params,}
+      { 'sound[url]' => params }
     else
-      {'sound[url]' => params[:url],
-       'sound[list_id]' => params[:list_id] }
+      sound_params = {
+        'sound[url]' => params[:url],
+        'sound[list_id]' => params[:list_id]
+      }
+      if params[:attribution]
+        attribution_params = { 
+          'attribution[media_entity]'           => params[:attribution][:media_entity],
+          'attribution[author]'                 => params[:attribution][:media_entity],
+          'attribution[author_url]'             => params[:attribution][:media_entity],
+          'attribution[attribution_license_id]' => params[:attribution][:media_entity]
+        }
+        sound_params.merge(attribution_params)
+      else
+        sound_params
+      end
     end
     Iknow::RestClient::Item.add_sound(iknow_auth, post_params.merge(:id => self.id))
   end
@@ -99,7 +125,12 @@ class Iknow::Item < Iknow::Base
   def add_tags(iknow_auth, *tags)
     post_params = {}
     tags.each_with_index do |tag, idx|
-      post_params["semantic_tags[#{idx}][name]"] = tag
+      if tag.is_a?(String)
+        post_params["semantic_tags[#{idx}][name]"] = tag
+      else
+        post_params["semantic_tags[#{idx}][name]"] = tag[:name]
+        post_params["semantic_tags[#{idx}][disambiguation]"] = tag[:disambiguation]
+      end
     end
     Iknow::RestClient::Item.add_tags(iknow_auth, post_params.merge(:id => self.id))
   end
