@@ -23,3 +23,11 @@
 == 0.2.0
 
 * support almost all API calls
+
+== 0.2.1
+
+* maintenance release
+
+== 0.2.
+
+* add attribution support for add_image & add_sound APIs
