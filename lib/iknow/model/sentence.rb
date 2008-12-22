@@ -1,5 +1,5 @@
 class Iknow::Sentence < Iknow::Base
-  ATTRIBUTES = [:sound, :image, :text, :language, :id, :transliterations, :translations, :item, :list]
+  ATTRIBUTES = [:sound, :image, :square_image, :text, :language, :id, :transliterations, :translations, :item, :list]
   READONLY_ATTRIBUTES = [:id]
   attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
   attr_reader *READONLY_ATTRIBUTES
@@ -33,6 +33,7 @@ class Iknow::Sentence < Iknow::Base
     @list     = params[:list]
     @sound    = params[:sound]
     @image    = params[:image]
+    @square_image = params[:square_image]
     @text     = params[:text]
     @language = params[:language]
     @transliterations = params[:transliterations]

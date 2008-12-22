@@ -14,7 +14,7 @@
 #     "author_url": "http://www.iknow.co.jp/user/Cerego"
 
 class Iknow::List < Iknow::Base
-  ATTRIBUTES = [:id, :title, :description, :icon, :item_count, :user_count, :iknow, :dictation, :brainspeed,
+  ATTRIBUTES = [:id, :title, :description, :icon, :square_icon, :item_count, :user_count, :iknow, :dictation, :brainspeed,
                 :language, :translation_language, :list_type, :transcript, :embed,
                 :tags, :media_entry, :author, :author_id, :author_url, :attribution_license_id,
                 :items, :sentences]
@@ -64,6 +64,7 @@ class Iknow::List < Iknow::Base
     @title       = params[:title]
     @description = params[:description]
     @icon        = params[:icon]
+    @square_icon = params[:square_icon]
     @item_count  = (params[:item_count].to_i rescue nil)
     @user_count  = (params[:user_count].to_i rescue nil)
     @language    = params[:language]
