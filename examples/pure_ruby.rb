@@ -7,6 +7,8 @@ Iknow::Config.init do |conf|
   conf.api_key               = '' # 'SET_YOUR_API_KEY'
   conf.oauth_consumer_key    = '' # 'SET_YOUR_OAUTH_CONSUMER_KEY'
   conf.oauth_consumer_secret = '' # 'SET_YOUR_OAUTH_CONSUMER_SECRET'
+  conf.oauth_http_method     = :post
+  conf.oauth_scheme          = :header
   conf.timeout               = 15
 end
 

@@ -28,8 +28,8 @@ class Iknow::Auth
     @@consumer ||= OAuth::Consumer.new(
       Iknow::Config.oauth_consumer_key,
       Iknow::Config.oauth_consumer_secret,
-      :http_method   => :get,
-      :schema        => :query_string,
+      :http_method   => Iknow::Config.oauth_http_method,
+      :scheme        => Iknow::Config.oauth_scheme,
       :site          => Iknow::Config.iknow_api_base_url,
       :authorize_url => "#{Iknow::Config.iknow_base_url}/oauth/authorize"
     )

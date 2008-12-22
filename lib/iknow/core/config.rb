@@ -3,7 +3,7 @@ require 'singleton'
 class Iknow::Config
   include Singleton
   attr_accessor :protocol, :host, :port, :api_protocol, :api_host, :api_port, :timeout,
-                :api_key, :oauth_consumer_key, :oauth_consumer_secret,
+                :api_key, :oauth_consumer_key, :oauth_consumer_secret, :oauth_http_method, :oauth_scheme,
                 :user_agent, :application_name, :application_version, :application_url, :source
 
   def self.init(&block)
@@ -18,6 +18,8 @@ class Iknow::Config
       :api_key               => '',
       :oauth_consumer_key    => '',
       :oauth_consumer_secret => '',
+      :oauth_http_method     => :post,
+      :oauth_scheme          => :header,
       :user_agent            => 'default',
       :application_name      => 'iKnow! Gem',
       :application_version   => Iknow::Version.to_version,
