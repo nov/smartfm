@@ -30,8 +30,8 @@ class Iknow::Auth
       Iknow::Config.oauth_consumer_secret,
       :http_method   => Iknow::Config.oauth_http_method,
       :scheme        => Iknow::Config.oauth_scheme,
-      :site          => Iknow::Config.iknow_api_base_url,
-      :authorize_url => "#{Iknow::Config.iknow_base_url}/oauth/authorize"
+      :site          => Iknow::Config.api_base_url,
+      :authorize_url => "#{Iknow::Config.base_url}/oauth/authorize"
     )
   end
 

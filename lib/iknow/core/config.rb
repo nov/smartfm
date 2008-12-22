@@ -2,9 +2,9 @@ require 'singleton'
 
 class Iknow::Config
   include Singleton
-  attr_accessor :protocol, :host, :port, :api_protocol, :api_host, :api_port, :timeout,
-                :api_key, :oauth_consumer_key, :oauth_consumer_secret, :oauth_http_method, :oauth_scheme,
-                :user_agent, :application_name, :application_version, :application_url, :source
+  attr_accessor :protocol, :host, :port, :api_protocol, :api_host, :api_port, :api_key, :timeout,
+                :oauth_consumer_key, :oauth_consumer_secret, :oauth_http_method, :oauth_scheme,
+                :user_agent, :application_name, :application_version, :application_url
 
   def self.init(&block)
     conf = Iknow::Config.instance
@@ -14,8 +14,8 @@ class Iknow::Config
       :api_protocol          => 'http',
       :api_host              => 'api.iknow.co.jp',
       :api_port              => 80,
-      :timeout               => 30,
       :api_key               => '',
+      :timeout               => 30,
       :oauth_consumer_key    => '',
       :oauth_consumer_secret => '',
       :oauth_http_method     => :post,
@@ -29,12 +29,12 @@ class Iknow::Config
     conf
   end
 
-  def iknow_base_url
+  def base_url
     port = self.port==80 ? nil : ":#{self.port}"
     "#{self.protocol}://#{self.host}#{port}"
   end
 
-  def iknow_api_base_url
+  def api_base_url
     port = self.api_port==80 ? nil : ":#{self.api_port}"
     "#{self.api_protocol}://#{self.api_host}#{port}"
   end
