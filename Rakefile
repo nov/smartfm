@@ -14,7 +14,7 @@ NAME              = "iknow"
 AUTHOR            = "nov"
 EMAIL             = "developer@iknow.co.jp"
 DESCRIPTION       = "A rubygem for iKnow! APIs"
-RUBYFORGE_PROJECT = "iknow"
+RUBYFORGE_PROJECT = NAME
 HOMEPATH          = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 BIN_FILES         = %w(  )
 
