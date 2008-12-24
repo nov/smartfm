@@ -95,6 +95,7 @@ class Iknow::User < Iknow::Base
 
   def study(params = {})
     params[:application] ||= 'iknow'
+    return nil unless ['iknow', 'dictation', 'brainspeed', ].include?(params[:application])
     hash = Iknow::RestClient::User.study_results(params.merge(:username => self.username))
     self.deserialize(hash, :as => Iknow::User::Study)
   end

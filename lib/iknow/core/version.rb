@@ -1,7 +1,7 @@
 module Iknow::Version
   MAJOR = 0
   MINOR = 2
-  REVISION = 2
+  REVISION = 3
   class << self
     def to_version
       "#{MAJOR}.#{MINOR}.#{REVISION}"
