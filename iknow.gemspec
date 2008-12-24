@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nov"]
-  s.date = %q{2008-12-23}
+  s.date = %q{2008-12-24}
   s.description = %q{A rubygem for iKnow! APIs}
   s.email = %q{developer@iknow.co.jp}
   s.extra_rdoc_files = ["README", "ChangeLog"]
@@ -15,7 +15,6 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://iknow.rubyforge.org}
   s.rdoc_options = ["--title", "iknow documentation", "--charset", "utf-8", "--opname", "index.html", "--line-numbers", "--main", "README", "--inline-source", "--exclude", "^(examples|extras)/"]
   s.require_paths = ["lib"]
-  s.required_ruby_version = Gem::Requirement.new(">= 1.8.6")
   s.rubyforge_project = %q{iknow}
   s.rubygems_version = %q{1.3.1}
   s.summary = %q{A rubygem for iKnow! APIs}

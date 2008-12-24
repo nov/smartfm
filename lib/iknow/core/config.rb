@@ -2,9 +2,10 @@ require 'singleton'
 
 class Iknow::Config
   include Singleton
-  attr_accessor :protocol, :host, :port, :api_protocol, :api_host, :api_port, :api_key, :timeout,
-                :oauth_consumer_key, :oauth_consumer_secret, :oauth_http_method, :oauth_scheme,
-                :user_agent, :application_name, :application_version, :application_url
+  ATTRIBUTES = [ :protocol, :host, :port, :api_protocol, :api_host, :api_port, :api_key, :timeout,
+                 :oauth_consumer_key, :oauth_consumer_secret, :oauth_http_method, :oauth_scheme,
+                 :user_agent, :application_name, :application_version, :application_url ]
+  attr_accessor *ATTRIBUTES
 
   def self.init(&block)
     conf = Iknow::Config.instance
@@ -39,8 +40,12 @@ class Iknow::Config
     "#{self.api_protocol}://#{self.api_host}#{port}"
   end
 
-  def self.method_missing(method, *args)
-    self.instance.send(method, *args)
+  # hack: Object.timeout is already defined..
+  def self.timeout
+    instance.timeout
   end
 
+  def self.method_missing(method, *args)
+    Iknow::Config.instance.send(method, *args)
+  end
 end

@@ -12,3 +12,5 @@ require 'ext/hash'
 require 'iknow/core'
 require 'iknow/rest_client'
 require 'iknow/model'
+
+Iknow::Config.init

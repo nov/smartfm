@@ -62,7 +62,7 @@ spec = Gem::Specification.new do |s|
 
 	s.add_dependency('json')
 	s.add_dependency('oauth')
-	s.required_ruby_version = '>= 1.8.6'
+  # s.required_ruby_version = '>= 1.8.6'
 
 	s.files = %w(README ChangeLog Rakefile) +
 		Dir.glob("{bin,doc,test,lib,templates,extras,website,script}/**/*") + 
