@@ -22,8 +22,10 @@ class Iknow::List < Iknow::Base
   attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
   attr_reader   *READONLY_ATTRIBUTES
 
-  class Application
-    attr_reader :application, :list_id, :lang
+  class Application < Iknow::Base
+    ATTRIBUTES = [:application, :list_id, :lang]
+    attr_reader *ATTRIBUTES
+
     def initialize(params = {})
       @application  = params[:application]
       @list_id      = params[:list_id]

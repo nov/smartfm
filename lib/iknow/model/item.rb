@@ -4,7 +4,7 @@ class Iknow::Item < Iknow::Base
   attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
   attr_reader *READONLY_ATTRIBUTES
 
-  class Response
+  class Response < Iknow::Base
     ATTRIBUTES = [:text, :text_with_character, :type, :language]
     READONLY_ATTRIBUTES = [:type]
     attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
@@ -17,17 +17,18 @@ class Iknow::Item < Iknow::Base
     end
   end
 
-  class Cue
-    ATTRIBUTES = [:text, :sound, :part_of_speech, :language]
+  class Cue < Iknow::Base
+    ATTRIBUTES = [:text, :sound, :part_of_speech, :language, :transliterations]
     READONLY_ATTRIBUTES = [:sound]
     attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
     attr_reader *READONLY_ATTRIBUTES
     
     def initialize(params = {})
-      @text           = params[:text]
-      @sound          = params[:sound]
-      @part_of_speech = params[:part_of_speech]
-      @language       = params[:language]
+      @text             = params[:text]
+      @sound            = params[:sound]
+      @part_of_speech   = params[:part_of_speech]
+      @language         = params[:language]
+      @transliterations = params[:transliterations]
     end
   end
 

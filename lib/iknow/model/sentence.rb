@@ -28,16 +28,16 @@ class Iknow::Sentence < Iknow::Base
   def initialize(params = {})
     params[:translations] = [params[:translation]] if params[:translation]
     params[:transliterations] = [params[:transliteration]] if params[:transliteration]
-    @id       = params[:id]
-    @item     = params[:item]
-    @list     = params[:list]
-    @sound    = params[:sound]
-    @image    = params[:image]
-    @square_image = params[:square_image]
-    @text     = params[:text]
-    @language = params[:language]
+    @id               = params[:id]
+    @item             = params[:item]
+    @list             = params[:list]
+    @sound            = params[:sound]
+    @image            = params[:image]
+    @square_image     = params[:square_image]
+    @text             = params[:text]
+    @language         = params[:language]
     @transliterations = params[:transliterations]
-    @translations = self.deserialize(params[:translations], :as => Iknow::Sentence)
+    @translations     = self.deserialize(params[:translations], :as => Iknow::Sentence)
   end
 
   def save(iknow_auth)
