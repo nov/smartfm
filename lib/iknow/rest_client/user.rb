@@ -1,5 +1,5 @@
 class Iknow::RestClient::User < Iknow::RestClient::Base
-  
+
   ACTIONS = {
     :find          => { :path => '/users/__username__'         },
     :lists         => { :path => '/users/__username__/lists'   },
@@ -8,5 +8,5 @@ class Iknow::RestClient::User < Iknow::RestClient::Base
     :study_results => { :path => '/users/__username__/study_results/__application__'   },
     :matching      => { :path => '/users/matching/__keyword__' }
   }
-  
+
 end
