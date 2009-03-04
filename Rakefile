@@ -10,17 +10,17 @@ require 'rake/contrib/sshpublisher'
 require 'fileutils'
 include FileUtils
 
-NAME              = "iknow"
+NAME              = "smartfm"
 AUTHOR            = "nov"
-EMAIL             = "developer@iknow.co.jp"
-DESCRIPTION       = "A rubygem for iKnow! APIs"
+EMAIL             = "developer@smart.fm"
+DESCRIPTION       = "A rubygem for smart.fm APIs"
 RUBYFORGE_PROJECT = NAME
 HOMEPATH          = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 BIN_FILES         = %w(  )
 
 $LOAD_PATH.unshift "#{File.dirname(__FILE__)}/lib"
-require 'lib/iknow'
-VERS              = Iknow::Version.to_version
+require 'lib/smartfm'
+VERS              = Smartfm::Version.to_version
 REV = File.read(".svn/entries")[/committed-rev="(d+)"/, 1] rescue nil
 CLEAN.include ['**/.*.sw?', '*.gem', '.config']
 RDOC_OPTS = [
@@ -38,6 +38,12 @@ task :package => [:clean]
 Rake::TestTask.new("test") do |t|
 	t.libs   << "test"
 	t.pattern = "test/**/*_test.rb"
+	t.verbose = true
+end
+
+Rake::TestTask.new("spec") do |t|
+	t.libs   << "spec"
+	t.pattern = "spec/**/*_spec.rb"
 	t.verbose = true
 end
 
@@ -65,7 +71,7 @@ spec = Gem::Specification.new do |s|
   # s.required_ruby_version = '>= 1.8.6'
 
 	s.files = %w(README ChangeLog Rakefile) +
-		Dir.glob("{bin,doc,test,lib,templates,extras,website,script}/**/*") + 
+		Dir.glob("{bin,doc,test,spec,lib,templates,extras,website,script}/**/*") + 
 		Dir.glob("ext/**/*.{h,c,rb}") +
 		Dir.glob("examples/**/*.rb") +
 		Dir.glob("tools/*.rb") +

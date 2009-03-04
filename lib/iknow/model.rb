@@ -1,5 +1,0 @@
-require 'iknow/model/base'
-require 'iknow/model/user'
-require 'iknow/model/list'
-require 'iknow/model/item'
-require 'iknow/model/sentence'

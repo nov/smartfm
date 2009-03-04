@@ -13,7 +13,7 @@
 
 == 0.1.0
 
-* add Iknow::Auth (supports basic_auth and oauth)
+* add Smartfm::Auth (supports basic_auth and oauth)
 * add List#create, List#delete, List#add_item, List#delete_item
 
 == 0.1.1
@@ -31,3 +31,8 @@
 == 0.2.2
 
 * add attribution support for add_image & add_sound APIs
+
+== 0.3.0
+
+* iKnow! => smart.fm
+* now, iKnow! is the name of Flash study application
