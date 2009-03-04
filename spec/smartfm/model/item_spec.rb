@@ -16,24 +16,6 @@ describe Smartfm::Item do
   end
 end
 
-describe Smartfm::Item, '#recent' do
-  it "should return a Array of Smartfm::Item" do
-    Smartfm::Item.recent.should be_a(Array)
-    Smartfm::Item.recent.each do |item|
-      item.should be_a(Smartfm::Item)
-    end
-  end
-end
-
-describe Smartfm::Item, '#matching' do
-  it "should return a Array of Smartfm::Item" do
-    Smartfm::Item.matching('smart').should be_a(Array)
-    Smartfm::Item.matching('smart').each do |item|
-      item.should be_a(Smartfm::Item)
-    end
-  end
-end
-
 describe Smartfm::Item, '#cue' do
   it "should return a instance o Smartfm::Item::Cue" do
     smart.cue.should be_a(Smartfm::Item::Cue)
