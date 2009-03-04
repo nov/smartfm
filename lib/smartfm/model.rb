@@ -1,0 +1,5 @@
+require 'smartfm/model/base'
+require 'smartfm/model/user'
+require 'smartfm/model/list'
+require 'smartfm/model/item'
+require 'smartfm/model/sentence'
