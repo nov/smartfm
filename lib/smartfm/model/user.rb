@@ -73,6 +73,10 @@ class Smartfm::User < Smartfm::Base
     self.deserialize(hash) || []
   end
 
+  def self.username(auth)
+    Smartfm::RestClient::User.username(auth)
+  end
+
   def initialize(params)
     @profile  = Profile.new(params[:profile])
     @username = params[:username]
