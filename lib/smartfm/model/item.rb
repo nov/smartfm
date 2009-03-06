@@ -54,7 +54,11 @@ class Smartfm::Item < Smartfm::Base
   def self.extract(text, params = {})
     params[:text] = text
     hash = Smartfm::RestClient::Item.extract(params)
-    self.deserialize(hash) || []
+    if params[:words_only] == false
+      self.deserialize(hash) || []
+    else
+      hash
+    end
   end
 
   def self.create(auth, params = {})

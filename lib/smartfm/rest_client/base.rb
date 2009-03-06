@@ -25,8 +25,13 @@ class Smartfm::RestClient::Base
     super unless self.valid_action?(action)
     case self.http_method(action)
     when :get
-      path, params = path_with_params(self.path(action), args[0])
-      http_get(path, params)
+      if args[0].is_a?(Smartfm::Auth)
+        path, params = path_with_params(self.path(action), args[1])
+        http_get_with_auth(auth(args[0]), path, params)
+      else
+        path, params = path_with_params(self.path(action), args[0])
+        http_get(path, params)
+      end
     when :post
       path, params = path_with_params(self.path(action), args[1])
       http_post(auth(args[0]), path, params)
@@ -133,6 +138,22 @@ class Smartfm::RestClient::Base
       path = (params.size > 0) ? "#{path}?#{params.to_http_str}" : path
       get_req = Net::HTTP::Get.new(path, http_header)
       [get_req, :json]
+    end
+  end
+
+  def self.http_get_with_auth(auth, path, params = {})
+    params.merge!(:api_key => self.config.api_key) unless self.config.api_key == ''
+    path = (params.size > 0) ? "#{path}?#{params.to_http_str}" : path
+    case auth.mode
+    when :oauth
+      response = auth.auth_token.get(path, http_header)
+      handle_rest_response(response, :text)
+    when :basic_auth
+      http_connect do
+        get_req = Net::HTTP::Get.new(path, http_header)
+        get_req.basic_auth(auth.account.username, auth.account.password)
+        [get_req, :text]
+      end
     end
   end
 

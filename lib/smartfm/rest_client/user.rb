@@ -7,7 +7,8 @@ class Smartfm::RestClient::User < Smartfm::RestClient::Base
     :friends       => { :path => '/users/__username__/friends'   },
     :followers     => { :path => '/users/__username__/followers' },
     :study_results => { :path => '/users/__username__/study_results/__application__'   },
-    :matching      => { :path => '/users/matching/__keyword__'   }
+    :matching      => { :path => '/users/matching/__keyword__'   },
+    :username      => { :path => '/sessions'                     }
   }
 
 end

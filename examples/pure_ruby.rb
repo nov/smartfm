@@ -64,7 +64,8 @@ puts "# Item API Calls"
 @recent_items = Smartfm::Item.recent(:include_sentences => true)
 @item = Smartfm::Item.find(437525)
 @matched_items = Smartfm::Item.matching('record', :include_sentences => true)
-@items = Smartfm::Item.extract("sometimes, often, electrical")
+@items_hash = Smartfm::Item.extract("sometimes, often, electrical")
+@items = Smartfm::Item.extract("sometimes, often, electrical", :words_only => false)
 @items.first.sentences
 
 ## Sentence API
