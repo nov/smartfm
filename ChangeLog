@@ -36,3 +36,8 @@
 
 * iKnow! => smart.fm
 * now, iKnow! is the name of Flash study application
+
+== 0.3.1
+
+* add sessions API support
+* fixed extract API bugs

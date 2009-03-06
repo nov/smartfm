@@ -1,7 +1,7 @@
 module Smartfm::Version
   MAJOR = 0
   MINOR = 3
-  REVISION = 0
+  REVISION = 1
   class << self
     def to_version
       "#{MAJOR}.#{MINOR}.#{REVISION}"
