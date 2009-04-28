@@ -177,14 +177,14 @@ class Smartfm::RestClient::Base
   def self.http_delete(auth, path, params = {})
     self.api_key_required
     params.merge!(:api_key => self.config.api_key)
+    path = "#{path}?#{params.to_http_str}"
     case auth.mode
     when :oauth
       response = auth.auth_token.delete(path, params.stringfy_keys!.stringfy_values!)
       handle_rest_response(response, :nothing)
     when :basic_auth
       http_connect do
-        delete_req = Net::HTTP::Post.new(path, http_header)
-        delete_req.body = params.merge(:_method => 'DELETE').to_http_str
+        delete_req = Net::HTTP::Delete.new(path, http_header)
         delete_req.basic_auth(auth.account.username, auth.account.password)
         [delete_req, :nothing]
       end
