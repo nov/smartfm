@@ -7,8 +7,8 @@
   This rubygem is a wrapper of smart.fm API.
   You can get pure-ruby example at examples/pure_ruby.rb.
   http://github.com/nov/smartfm/tree/master/examples/pure_ruby.rb
-  
-  It shows all API calls you can use with this gem.
+
+  It shows almost all API calls you can use with this gem.
 
 == Installation
 
@@ -26,15 +26,8 @@
 
 == Features/Problems
 
-  Test! Test!! Test!!!
-
-  Create/Add/Delete APIs are not implemented.
-  They will be implemented in a few weeks.
-  
-  smart.fm OAuth is still pre-alpha.
-
 == Synopsis
-  
+
   See examples and smart.fm Developers, please.
   smart.fm Developers (http://developer.smart.fm)
 
