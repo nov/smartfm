@@ -1,6 +1,6 @@
 class Smartfm::Item < Smartfm::Base
-  ATTRIBUTES = [:sentences, :responses, :cue, :id, :list]
-  READONLY_ATTRIBUTES = [:sentences, :responses, :cue, :id]
+  ATTRIBUTES = [:sentences, :responses, :cue, :id, :list, :user]
+  READONLY_ATTRIBUTES = [:sentences, :responses, :cue, :id, :user]
   attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
   attr_reader *READONLY_ATTRIBUTES
 
@@ -72,6 +72,12 @@ class Smartfm::Item < Smartfm::Base
     @cue       = self.deserialize(params[:cue], :as => Smartfm::Item::Cue)
     @responses = self.deserialize(params[:responses], :as => Smartfm::Item::Response)
     @sentences = self.deserialize(params[:sentences], :as => Smartfm::Sentence)
+    @user      = self.deserialize(params[:user],      :as => Smartfm::User)
+  end
+
+  def likes(params = {})
+    hash = Smartfm::RestClient::Item.likes(params.merge(:id => self.id))
+    self.deserialize(hash, :as => Smartfm::Like) || []
   end
 
   def save(auth)
@@ -85,46 +91,18 @@ class Smartfm::Item < Smartfm::Base
 
   def add_image(auth, params)
     post_params = if params.is_a?(String)
-      { 'image[url]' => params }
+      {'image[url]' => params}
     else
-      image_params = { 
-        'image[url]'     => params[:url],
-        'image[list_id]' => params[:list_id]
-      }
-      if params[:attribution]
-        attribution_params = { 
-          'attribution[media_entity]'           => params[:attribution][:media_entity],
-          'attribution[author]'                 => params[:attribution][:media_entity],
-          'attribution[author_url]'             => params[:attribution][:media_entity],
-          'attribution[attribution_license_id]' => params[:attribution][:media_entity]
-        }
-        image_params.merge(attribution_params)
-      else
-        image_params
-      end
+      {'image[url]' => params[:url], 'image[list_id]' => params[:list_id]}.merge(attribution_params(params[:attribution]))
     end
     Smartfm::RestClient::Item.add_image(auth, post_params.merge(:id => self.id))
   end
 
   def add_sound(auth, params)
     post_params = if params.is_a?(String)
-      { 'sound[url]' => params }
+      {'sound[url]' => params}
     else
-      sound_params = {
-        'sound[url]' => params[:url],
-        'sound[list_id]' => params[:list_id]
-      }
-      if params[:attribution]
-        attribution_params = { 
-          'attribution[media_entity]'           => params[:attribution][:media_entity],
-          'attribution[author]'                 => params[:attribution][:media_entity],
-          'attribution[author_url]'             => params[:attribution][:media_entity],
-          'attribution[attribution_license_id]' => params[:attribution][:media_entity]
-        }
-        sound_params.merge(attribution_params)
-      else
-        sound_params
-      end
+      {'sound[url]' => params[:url], 'sound[list_id]' => params[:list_id]}.merge(attribution_params(params[:attribution]))
     end
     Smartfm::RestClient::Item.add_sound(auth, post_params.merge(:id => self.id))
   end
@@ -140,6 +118,14 @@ class Smartfm::Item < Smartfm::Base
       end
     end
     Smartfm::RestClient::Item.add_tags(auth, post_params.merge(:id => self.id))
+  end
+
+  def like!(auth, params)
+    Smartfm::RestClient::Item.like!(auth, params.merge(:id => self.id))
+  end
+
+  def unlike!(auth, params)
+    Smartfm::RestClient::Item.unlike!(auth, params.merge(:id => self.id))
   end
 
   protected

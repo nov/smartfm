@@ -1,6 +1,6 @@
 class Smartfm::Sentence < Smartfm::Base
-  ATTRIBUTES = [:sound, :image, :square_image, :text, :language, :id, :transliterations, :translations, :item, :list]
-  READONLY_ATTRIBUTES = [:id]
+  ATTRIBUTES = [:sound, :image, :square_image, :text, :language, :id, :transliterations, :translations, :item, :list, :user]
+  READONLY_ATTRIBUTES = [:id, :user]
   attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
   attr_reader *READONLY_ATTRIBUTES
 
@@ -38,6 +38,12 @@ class Smartfm::Sentence < Smartfm::Base
     @language         = params[:language]
     @transliterations = params[:transliterations]
     @translations     = self.deserialize(params[:translations], :as => Smartfm::Sentence)
+    @user             = self.deserialize(params[:user],         :as => Smartfm::User)
+  end
+
+  def likes(params = {})
+    hash = Smartfm::RestClient::Sentence.likes(params.merge(:id => self.id))
+    self.deserialize(hash, :as => Smartfm::Like) || []
   end
 
   def save(auth)
@@ -65,6 +71,14 @@ class Smartfm::Sentence < Smartfm::Base
       {'sound[url]' => params[:url], 'sound[list_id]' => params[:list_id]}.merge(attribution_params(params[:attribution]))
     end
     Smartfm::RestClient::Sentence.add_sound(auth, post_params.merge(:id => self.id))
+  end
+
+  def like!(auth, params)
+    Smartfm::RestClient::Sentence.like!(auth, params.merge(:id => self.id))
+  end
+
+  def unlike!(auth, params)
+    Smartfm::RestClient::Sentence.unlike!(auth, params.merge(:id => self.id))
   end
 
   protected
@@ -105,14 +119,6 @@ class Smartfm::Sentence < Smartfm::Base
 
   def transliteration
     self.transliterations.first rescue nil
-  end
-
-  def attribution_params(attr_params)
-    return {} unless attr_params
-    {'attribution[medias_entity]'           => attr_params[:media_entity],
-     'attribution[author]'                  => attr_params[:author],
-     'attribution[author_url]'              => attr_params[:author_url],
-     'attributions[attribution_license_id]' => attr_params[:attribution_license_id] }
   end
 
 end

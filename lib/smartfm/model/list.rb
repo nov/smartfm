@@ -1,9 +1,8 @@
 class Smartfm::List < Smartfm::Base
   ATTRIBUTES = [:id, :title, :description, :icon, :square_icon, :item_count, :user_count, :iknow, :dictation, :brainspeed,
-                :language, :translation_language, :list_type, :transcript, :embed,
-                :tags, :media_entry, :author, :author_id, :author_url, :attribution_license_id,
-                :items, :sentences]
-  READONLY_ATTRIBUTES = [:id, :icon, :item_count, :user_count, :iknow, :dictation, :brainspeed]
+                :language, :translation_language, :list_type, :transcript, :embed, :tags, :media_entry,
+                :attribution_license_id, :items, :sentences, :user]
+  READONLY_ATTRIBUTES = [:id, :icon, :item_count, :user_count, :iknow, :dictation, :brainspeed, :user]
   attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
   attr_reader   *READONLY_ATTRIBUTES
 
@@ -62,17 +61,15 @@ class Smartfm::List < Smartfm::Base
       @dictation  = Application.new(common_settings.merge(:application => 'dictation'))  if params[:dictation]
       @brainspeed = Application.new(common_settings.merge(:application => 'brainspeed')) if params[:brainspeed]
     end
-    @author      = params[:author]      # display_name or username
-    @author_id   = params[:author_id]   # username
-    @author_url  = params[:author_url]
     @list_type   = params[:list_type]   # for list creation
     @transcript  = params[:transcript]  # for list creation
     @embed       = params[:embed]       # for list creation
     @tags        = params[:tags]        # for list creation
     @media_entry = params[:media_entry] # for list creation
     @attribution_license_id = params[:attribution_license_id] # for list creation
-    @items     = self.deserialize(params[:items],     :as => Smartfm::Item)
-    @sentences = self.deserialize(params[:sentences], :as => Smartfm::Sentence)
+    @items       = self.deserialize(params[:items],     :as => Smartfm::Item)
+    @sentences   = self.deserialize(params[:sentences], :as => Smartfm::Sentence)
+    @user        = self.deserialize(params[:user],      :as => Smartfm::User)
   end
 
   def items(params = {})
@@ -83,6 +80,11 @@ class Smartfm::List < Smartfm::Base
   def sentences(params = {})
     hash = Smartfm::RestClient::List.sentences(params.merge(:id => self.id))
     self.deserialize(hash, :as => Smartfm::Sentence) || []
+  end
+
+  def likes(params = {})
+    hash = Smartfm::RestClient::List.likes(params.merge(:id => self.id))
+    self.deserialize(hash, :as => Smartfm::Like) || []
   end
 
   def save(auth)
@@ -100,11 +102,19 @@ class Smartfm::List < Smartfm::Base
   alias_method :destroy, :delete
 
   def add_item(auth, item)
-    Smartfm::RestClient::List.add_item(auth, {:list_id => self.id, :id => item.id})
+    Smartfm::RestClient::List.add_item(auth, {:id => self.id, :item_id => item.id})
   end
 
   def delete_item(auth, item)
-    Smartfm::RestClient::List.delete_item(auth, {:list_id => self.id, :id => item.id})
+    Smartfm::RestClient::List.delete_item(auth, {:id => self.id, :item_id => item.id})
+  end
+
+  def like!(auth, params)
+    Smartfm::RestClient::List.like!(auth, params.merge(:id => self.id))
+  end
+
+  def unlike!(auth, params)
+    Smartfm::RestClient::List.unlike!(auth, params.merge(:id => self.id))
   end
 
   protected
@@ -121,8 +131,7 @@ class Smartfm::List < Smartfm::Base
     if self.list_type
       post_data['list[type]'] = self.list_type
     end
-    [ :transcript, :embed, :tags, :media_entry,
-      :author, :author_url, :attribution_license_id ].each do |key|
+    [:transcript, :embed, :tags, :media_entry, :author, :author_url, :attribution_license_id ].each do |key|
       if self.send("#{key}")
         post_data["list[#{key}]"] = self.send("#{key}")
       end

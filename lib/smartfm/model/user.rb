@@ -73,8 +73,8 @@ class Smartfm::User < Smartfm::Base
     self.deserialize(hash) || []
   end
 
-  def self.username(auth)
-    Smartfm::RestClient::User.username(auth, {})
+  def self.logging_in(auth)
+    Smartfm::RestClient::User.logging_in(auth, {})
   end
 
   def initialize(params)
@@ -92,6 +92,11 @@ class Smartfm::User < Smartfm::Base
     self.deserialize(hash, :as => Smartfm::List) || []
   end
 
+  def likes(params = {})
+    hash = Smartfm::RestClient::User.likes(params.merge(:username => self.username))
+    self.deserialize(hash, :as => Smartfm::Like) || []
+  end
+
   def friends(params = {})
     hash = Smartfm::RestClient::User.friends(params.merge(:username => self.username))
     self.deserialize(hash) || []
@@ -107,6 +112,14 @@ class Smartfm::User < Smartfm::Base
     return nil unless ['iknow', 'dictation', 'brainspeed', ].include?(params[:application])
     hash = Smartfm::RestClient::User.study_results(params.merge(:username => self.username))
     self.deserialize(hash, :as => Smartfm::User::Study)
+  end
+
+  def follow!(auth, params = {})
+    Smartfm::RestClient::User.follow!(auth, params.merge(:username => self.username))
+  end
+
+  def unfollow!(auth, params = {})
+    Smartfm::RestClient::User.unfollow!(auth, params.merge(:username => self.username))
   end
 
 end
