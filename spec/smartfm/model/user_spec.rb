@@ -64,6 +64,24 @@ describe Smartfm::User, '#followers' do
   end
 end
 
+describe Smartfm::User, '#likes' do
+  it "should return a Array of Smartfm::Like" do
+    matake.likes.should be_a(Array)
+    matake.likes.each do |like|
+      like.should be_a(Smartfm::Like)
+    end
+  end
+end
+
+describe Smartfm::User, '#notifications' do
+  it "should return a Array of Smartfm::Notification" do
+    matake.notifications.should be_a(Array)
+    matake.notifications.each do |notification|
+      notification.should be_a(Smartfm::Notification)
+    end
+  end
+end
+
 describe Smartfm::User, '#study' do
   it "should return a instance of Smartfm::User::Study" do
     matake.study.should be_a(Smartfm::User::Study)

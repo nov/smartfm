@@ -4,26 +4,12 @@ class Smartfm::Sentence < Smartfm::Base
   attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
   attr_reader *READONLY_ATTRIBUTES
 
-  def self.recent(params = {})
-    hash = Smartfm::RestClient::Sentence.recent(params)
-    self.deserialize(hash) || []
-  end
+  include Smartfm::PublicContent
+  include Smartfm::MediaSupport
+  include Smartfm::ActsAsLikable
 
-  def self.find(sentence_id, params = {})
-    params[:id] = sentence_id
-    hash = Smartfm::RestClient::Sentence.find(params)
-    self.deserialize(hash)
-  end
-
-  def self.matching(keyword, params = {})
-    params[:keyword] = keyword
-    hash = Smartfm::RestClient::Sentence.matching(params)
-    self.deserialize(hash) || []
-  end
-
-  def self.create(auth, params = {})
-    self.new(params).save(auth)
-  end
+  def self.rest_client; Smartfm::RestClient::Sentence; end
+  def rest_client; self.class.rest_client; end
 
   def initialize(params = {})
     params[:translations] = [params[:translation]] if params[:translation]
@@ -39,46 +25,6 @@ class Smartfm::Sentence < Smartfm::Base
     @transliterations = params[:transliterations]
     @translations     = self.deserialize(params[:translations], :as => Smartfm::Sentence)
     @user             = self.deserialize(params[:user],         :as => Smartfm::User)
-  end
-
-  def likes(params = {})
-    hash = Smartfm::RestClient::Sentence.likes(params.merge(:id => self.id))
-    self.deserialize(hash, :as => Smartfm::Like) || []
-  end
-
-  def save(auth)
-    begin
-      sentence_id = Smartfm::RestClient::Sentence.create(auth, self.to_post_data)
-    rescue
-      return false
-    end
-    Smartfm::Sentence.find(sentence_id)
-  end
-
-  def add_image(auth, params)
-    post_params = if params.is_a?(String)
-      {'image[url]' => params}
-    else
-      {'image[url]' => params[:url], 'image[list_id]' => params[:list_id]}.merge(attribution_params(params[:attribution]))
-    end
-    Smartfm::RestClient::Sentence.add_image(auth, post_params.merge(:id => self.id))
-  end
-
-  def add_sound(auth, params)
-    post_params = if params.is_a?(String)
-      {'sound[url]' => params}
-    else
-      {'sound[url]' => params[:url], 'sound[list_id]' => params[:list_id]}.merge(attribution_params(params[:attribution]))
-    end
-    Smartfm::RestClient::Sentence.add_sound(auth, post_params.merge(:id => self.id))
-  end
-
-  def like!(auth, params)
-    Smartfm::RestClient::Sentence.like!(auth, params.merge(:id => self.id))
-  end
-
-  def unlike!(auth, params)
-    Smartfm::RestClient::Sentence.unlike!(auth, params.merge(:id => self.id))
   end
 
   protected

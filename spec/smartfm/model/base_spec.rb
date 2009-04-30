@@ -10,9 +10,11 @@ subclasses.each do |klass|
     end
   end
 
-  describe klass, '.find' do
-    it "should return nil if NOT FOUND" do
-      klass.find(-1).should be_nil
+  if klass.respond_to?(:recent)
+    describe klass, '.find' do
+      it "should return nil if NOT FOUND" do
+        klass.find(-1).should be_nil
+      end
     end
   end
 

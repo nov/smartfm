@@ -1,6 +1,11 @@
 class Smartfm::Like < Smartfm::Base
   ATTRIBUTES = [:id, :type, :title, :description, :href, :favorite, :user]
   attr_reader *ATTRIBUTES
+  
+  include Smartfm::PrivateContent
+
+  def self.rest_client; Smartfm::RestClient::Like; end
+  def rest_client; self.class.rest_client; end
 
   def initialize(params)
     @id          = params[:id]

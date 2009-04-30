@@ -1,0 +1,7 @@
+require 'smartfm/models/base'
+require 'smartfm/models/user'
+require 'smartfm/models/list'
+require 'smartfm/models/item'
+require 'smartfm/models/sentence'
+require 'smartfm/models/like'
+require 'smartfm/models/notification'

@@ -4,6 +4,13 @@ class Smartfm::Item < Smartfm::Base
   attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
   attr_reader *READONLY_ATTRIBUTES
 
+  include Smartfm::PublicContent
+  include Smartfm::MediaSupport
+  include Smartfm::ActsAsLikable
+
+  def self.rest_client; Smartfm::RestClient::Item; end
+  def rest_client; self.class.rest_client; end
+
   class Response < Smartfm::Base
     ATTRIBUTES = [:text, :text_with_character, :type, :language]
     READONLY_ATTRIBUTES = [:type]
@@ -34,77 +41,24 @@ class Smartfm::Item < Smartfm::Base
     end
   end
 
-  def self.recent(params = {})
-    hash = Smartfm::RestClient::Item.recent(params)
-    self.deserialize(hash) || []
-  end
-
-  def self.find(item_id, params = {})
-    params[:id] = item_id
-    hash = Smartfm::RestClient::Item.find(params)
-    self.deserialize(hash)
-  end
-
-  def self.matching(keyword, params = {})
-    params[:keyword] = keyword
-    hash = Smartfm::RestClient::Item.matching(params)
-    self.deserialize(hash) || []
-  end
-
-  def self.extract(text, params = {})
-    params[:text] = text
-    hash = Smartfm::RestClient::Item.extract(params)
-    if params[:words_only] == false
-      self.deserialize(hash) || []
-    else
-      hash
-    end
-  end
-
-  def self.create(auth, params = {})
-    self.new(params).save(auth)
-  end
-
   def initialize(params = {})
     params[:responses] = [params[:response]] if params[:response]
     @id        = params[:id].to_i
     @list      = params[:list]
-    @cue       = self.deserialize(params[:cue], :as => Smartfm::Item::Cue)
+    @cue       = self.deserialize(params[:cue],       :as => Smartfm::Item::Cue)
     @responses = self.deserialize(params[:responses], :as => Smartfm::Item::Response)
     @sentences = self.deserialize(params[:sentences], :as => Smartfm::Sentence)
     @user      = self.deserialize(params[:user],      :as => Smartfm::User)
   end
 
-  def likes(params = {})
-    hash = Smartfm::RestClient::Item.likes(params.merge(:id => self.id))
-    self.deserialize(hash, :as => Smartfm::Like) || []
-  end
-
-  def save(auth)
-    begin
-      item_id = Smartfm::RestClient::Item.create(auth, self.to_post_data)
-    rescue
-      return false
-    end
-    Smartfm::Item.find(item_id)
-  end
-
-  def add_image(auth, params)
-    post_params = if params.is_a?(String)
-      {'image[url]' => params}
+  def self.extract(text, params = {})
+    params[:text] = text
+    hash = self.rest_client.extract(params)
+    if params[:words_only] == false
+      self.deserialize(hash) || []
     else
-      {'image[url]' => params[:url], 'image[list_id]' => params[:list_id]}.merge(attribution_params(params[:attribution]))
+      hash
     end
-    Smartfm::RestClient::Item.add_image(auth, post_params.merge(:id => self.id))
-  end
-
-  def add_sound(auth, params)
-    post_params = if params.is_a?(String)
-      {'sound[url]' => params}
-    else
-      {'sound[url]' => params[:url], 'sound[list_id]' => params[:list_id]}.merge(attribution_params(params[:attribution]))
-    end
-    Smartfm::RestClient::Item.add_sound(auth, post_params.merge(:id => self.id))
   end
 
   def add_tags(auth, *tags)
@@ -117,15 +71,7 @@ class Smartfm::Item < Smartfm::Base
         post_params["semantic_tags[#{idx}][disambiguation]"] = tag[:disambiguation]
       end
     end
-    Smartfm::RestClient::Item.add_tags(auth, post_params.merge(:id => self.id))
-  end
-
-  def like!(auth, params)
-    Smartfm::RestClient::Item.like!(auth, params.merge(:id => self.id))
-  end
-
-  def unlike!(auth, params)
-    Smartfm::RestClient::Item.unlike!(auth, params.merge(:id => self.id))
+    self.rest_client.add_tags(auth, post_params.merge(:id => self.id))
   end
 
   protected

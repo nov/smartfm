@@ -39,3 +39,12 @@ describe Smartfm::Item, '#sentences' do
     end
   end
 end
+
+describe Smartfm::Item, '#likes' do
+  it "should return a Array of Smartfm::Like" do
+    smart.likes.should be_a(Array)
+    smart.likes.each do |like|
+      like.should be_a(Smartfm::Like)
+    end
+  end
+end

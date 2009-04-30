@@ -1,7 +1,11 @@
 require File.join(File.dirname(__FILE__), '..', '..', 'spec_helper')
 
-describe String do
-  it "should respond to length" do
-    "hoge".should respond_to(:length)
+matake_likes = Smartfm::User.find('matake').likes
+
+describe Smartfm::Like do
+  it "should respond to attribute methods" do
+    Smartfm::Like::ATTRIBUTES.each do |attr|
+      matake_likes.first.should respond_to(attr)
+    end
   end
 end

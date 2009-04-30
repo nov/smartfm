@@ -6,43 +6,32 @@ class Smartfm::List < Smartfm::Base
   attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
   attr_reader   *READONLY_ATTRIBUTES
 
+  include Smartfm::PublicContent
+  include Smartfm::ActsAsLikable
+
+  def self.rest_client; Smartfm::RestClient::List; end
+  def rest_client; self.class.rest_client; end
+
   class Application < Smartfm::Base
-    ATTRIBUTES = [:application, :list_id, :lang]
+    ATTRIBUTES = [:application, :available, :progress, :list_id, :lang]
     attr_reader *ATTRIBUTES
 
     def initialize(params = {})
-      @application  = params[:application]
-      @list_id      = params[:list_id]
-      @lang         = params[:lang]
+      @application = case
+        when params[:iknow]      then :iknow
+        when params[:dictation]  then :dictation
+        when params[:brainspeed] then :brainspeed
+        end
+      @available = params[self.application][:available]
+      @progress  = params[self.application][:progress]
+      @href      = params[self.application][:href]
+      @list_id   = params[:list_id]
+      @lang      = params[:lang]
     end
-    def url
-      "http://smart.fm/flash?swf=#{self.name}&course_id=#{self.list_id}&lang=#{self.lang}"
+
+    def available?
+      self.available
     end
-  end
-
-  def self.recent(params = {})
-    hash = Smartfm::RestClient::List.recent(params)
-    self.deserialize(hash) || []
-  end
-
-  def self.find(list_id, params = {})
-    params[:id] = list_id
-    hash = Smartfm::RestClient::List.find(params)
-    self.deserialize(hash)
-  end
-
-  def self.matching(keyword, params = {})
-    params[:keyword] = keyword
-    hash = Smartfm::RestClient::List.matching(params)
-    self.deserialize(hash) || []
-  end
-
-  def self.create(auth, params = {})
-    self.new(params).save(auth)
-  end
-
-  def self.delete(list_id)
-    self.find(list_id).delete
   end
 
   def initialize(params = {})
@@ -55,11 +44,11 @@ class Smartfm::List < Smartfm::Base
     @user_count  = (params[:user_count].to_i rescue nil)
     @language    = params[:language]
     @translation_language = params[:translation_language]
-    if @list_id and @translation_language
+    if @id and @translation_language
       common_settings = {:list_id => @id, :lang => @translation_language}
-      @iknow      = Application.new(common_settings.merge(:application => 'iknow'))      if params[:iknow]
-      @dictation  = Application.new(common_settings.merge(:application => 'dictation'))  if params[:dictation]
-      @brainspeed = Application.new(common_settings.merge(:application => 'brainspeed')) if params[:brainspeed]
+      @iknow      = Application.new(common_settings.merge(:iknow      => params[:iknow]))
+      @dictation  = Application.new(common_settings.merge(:dictation  => params[:dictation]))
+      @brainspeed = Application.new(common_settings.merge(:brainspeed => params[:brainspeed]))
     end
     @list_type   = params[:list_type]   # for list creation
     @transcript  = params[:transcript]  # for list creation
@@ -73,48 +62,21 @@ class Smartfm::List < Smartfm::Base
   end
 
   def items(params = {})
-    hash = Smartfm::RestClient::List.items(params.merge(:id => self.id))
+    hash = self.rest_client.items(params.merge(:id => self.id))
     self.deserialize(hash, :as => Smartfm::Item) || []
   end
 
   def sentences(params = {})
-    hash = Smartfm::RestClient::List.sentences(params.merge(:id => self.id))
+    hash = self.rest_client.sentences(params.merge(:id => self.id))
     self.deserialize(hash, :as => Smartfm::Sentence) || []
   end
 
-  def likes(params = {})
-    hash = Smartfm::RestClient::List.likes(params.merge(:id => self.id))
-    self.deserialize(hash, :as => Smartfm::Like) || []
-  end
-
-  def save(auth)
-    begin
-      list_id = Smartfm::RestClient::List.create(auth, self.to_post_data)
-    rescue
-      return false
-    end
-    Smartfm::List.find(list_id)
-  end
-
-  def delete(auth)
-    Smartfm::RestClient::List.delete(auth, {:id => self.id})
-  end
-  alias_method :destroy, :delete
-
   def add_item(auth, item)
-    Smartfm::RestClient::List.add_item(auth, {:id => self.id, :item_id => item.id})
+    self.rest_client.add_item(auth, {:id => self.id, :item_id => item.id})
   end
 
   def delete_item(auth, item)
-    Smartfm::RestClient::List.delete_item(auth, {:id => self.id, :item_id => item.id})
-  end
-
-  def like!(auth, params)
-    Smartfm::RestClient::List.like!(auth, params.merge(:id => self.id))
-  end
-
-  def unlike!(auth, params)
-    Smartfm::RestClient::List.unlike!(auth, params.merge(:id => self.id))
+    self.rest_client.delete_item(auth, {:id => self.id, :item_id => item.id})
   end
 
   protected
