@@ -5,11 +5,11 @@ module Smartfm::ActsAsLikable
     self.deserialize(hash, :as => Smartfm::Like) || []
   end
 
-  def like!(auth, params)
+  def like!(auth, params = {})
     self.rest_client.like!(auth, params.merge(:id => self.id))
   end
 
-  def unlike!(auth, params)
+  def unlike!(auth, params = {})
     self.rest_client.unlike!(auth, params.merge(:id => self.id))
   end
 

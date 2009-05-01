@@ -1,6 +1,6 @@
 class Smartfm::List < Smartfm::Base
   ATTRIBUTES = [:id, :title, :description, :icon, :square_icon, :item_count, :user_count, :iknow, :dictation, :brainspeed,
-                :language, :translation_language, :list_type, :transcript, :embed, :tags, :media_entry,
+                :language, :translation_language, :item_type, :transcript, :embed, :tags, :media_entry,
                 :attribution_license_id, :items, :sentences, :user]
   READONLY_ATTRIBUTES = [:id, :icon, :item_count, :user_count, :iknow, :dictation, :brainspeed, :user]
   attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
@@ -50,7 +50,7 @@ class Smartfm::List < Smartfm::Base
       @dictation  = Application.new(common_settings.merge(:dictation  => params[:dictation]))
       @brainspeed = Application.new(common_settings.merge(:brainspeed => params[:brainspeed]))
     end
-    @list_type   = params[:list_type]   # for list creation
+    @item_type   = params[:item_type]   # for list creation
     @transcript  = params[:transcript]  # for list creation
     @embed       = params[:embed]       # for list creation
     @tags        = params[:tags]        # for list creation
@@ -90,10 +90,7 @@ class Smartfm::List < Smartfm::Base
       'list[translation_language]' => self.translation_language || 'ja'
     }
     # Optional attributes
-    if self.list_type
-      post_data['list[type]'] = self.list_type
-    end
-    [:transcript, :embed, :tags, :media_entry, :author, :author_url, :attribution_license_id ].each do |key|
+    [:transcript, :embed, :tags, :item_type].each do |key|
       if self.send("#{key}")
         post_data["list[#{key}]"] = self.send("#{key}")
       end

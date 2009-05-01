@@ -17,7 +17,7 @@ class Smartfm::Notification < Smartfm::Base
     @context   = params[:context]
   end
 
-  private
+  protected
 
   def to_post_data
     {:message => self.message}

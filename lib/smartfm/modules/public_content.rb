@@ -34,12 +34,15 @@ module Smartfm::PublicContent
 
   module InstanceMethods
     def save(auth)
-      begin
-        obj_id = self.rest_client.create(auth, self.to_post_data)
-      rescue
-        return false
+      result = self.rest_client.create(auth, self.to_post_data)
+      case result
+      when Hash
+        self.deserialize(result)
+      when String
+        self.find(result)
+      else
+        true
       end
-      self.find(obj_id)
     end
 
     def delete(auth)

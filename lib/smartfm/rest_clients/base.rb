@@ -147,18 +147,18 @@ class Smartfm::RestClient::Base
     case auth.mode
     when :oauth
       response = auth.auth_token.get(path, http_header)
-      handle_rest_response(response, :text)
+      handle_rest_response(response, :json)
     when :basic_auth
       http_connect do
         get_req = Net::HTTP::Get.new(path, http_header)
         get_req.basic_auth(auth.account.username, auth.account.password)
-        [get_req, :text]
+        [get_req, :json]
       end
     end
   end
 
   def self.http_post(auth, path, params = {})
-    self.api_key_required
+    api_key_required
     params.merge!(:api_key => self.config.api_key)
     case auth.mode
     when :oauth
@@ -175,7 +175,7 @@ class Smartfm::RestClient::Base
   end
 
   def self.http_delete(auth, path, params = {})
-    self.api_key_required
+    api_key_required
     params.merge!(:api_key => self.config.api_key)
     path = "#{path}?#{params.to_http_str}"
     case auth.mode

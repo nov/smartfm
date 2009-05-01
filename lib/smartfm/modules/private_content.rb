@@ -12,13 +12,21 @@ module Smartfm::PrivateContent
     end
 
     def create(auth, params = {})
-      self.new(params).save
+      self.new(params).save(auth)
     end
   end
 
   module InstanceMethods
     def save(auth)
-      self.rest_client.create(auth, self.to_post_data)
+      result = self.rest_client.create(auth, self.to_post_data)
+      case result
+      when Hash
+        self.deserialize(result)
+      when String
+        self.find(result)
+      else
+        true
+      end
     end
   end
 
