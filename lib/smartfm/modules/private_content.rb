@@ -18,15 +18,7 @@ module Smartfm::PrivateContent
 
   module InstanceMethods
     def save(auth)
-      result = self.rest_client.create(auth, self.to_post_data)
-      case result
-      when Hash
-        self.deserialize(result)
-      when String
-        self.find(result)
-      else
-        true
-      end
+      self.rest_client.create(auth, self.to_post_data)
     end
   end
 

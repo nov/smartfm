@@ -13,8 +13,8 @@ class Smartfm::RestClient::User < Smartfm::RestClient::Base
     :notifications        => {:path => '/users/__username__/notifications'},
     :matching             => {:path => '/users/matching/__keyword__'      },
     :study_results        => {:path => '/users/__username__/study_results/__application__'},
-    :follow!              => {:path => '/users/__username__/friends', :http_method => :post},
-    :unfollow!            => {:path => '/users/__username__/friends', :http_method => :delete}
+    :follow!              => {:path => '/friends',              :http_method => :post},
+    :unfollow!            => {:path => '/friends/__username__', :http_method => :delete}
   }
 
 end

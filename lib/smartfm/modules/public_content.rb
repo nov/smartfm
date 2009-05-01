@@ -39,7 +39,7 @@ module Smartfm::PublicContent
       when Hash
         self.deserialize(result)
       when String
-        self.find(result)
+        self.class.find(result)
       else
         true
       end
