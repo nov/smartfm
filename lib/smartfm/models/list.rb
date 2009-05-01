@@ -72,7 +72,8 @@ class Smartfm::List < Smartfm::Base
   end
 
   def add_item(auth, item)
-    self.rest_client.add_item(auth, {:id => self.id, :item_id => item.id})
+    # id is used for item_id only here..
+    self.rest_client.add_item(auth, {:list_id => self.id, :id => item.id})
   end
 
   def delete_item(auth, item)

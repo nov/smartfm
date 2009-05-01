@@ -8,7 +8,7 @@ class Smartfm::RestClient::List < Smartfm::RestClient::Base
     :matching    => {:path => '/lists/matching/__keyword__'},
     :likes       => {:path => '/lists/__id__/likes'        },
     :create      => {:path => '/lists',                          :http_method => :post},
-    :add_item    => {:path => '/lists/__id__/items',             :http_method => :post},
+    :add_item    => {:path => '/lists/__list_id__/items',        :http_method => :post}, # id is used for item_id here..
     :like!       => {:path => '/lists/__id__/likes',             :http_method => :post},
     :delete      => {:path => '/lists/__id__',                   :http_method => :delete},
     :delete_item => {:path => '/lists/__id__/items/__item_id__', :http_method => :delete},

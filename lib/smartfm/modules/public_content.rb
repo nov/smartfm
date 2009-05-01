@@ -11,8 +11,8 @@ module Smartfm::PublicContent
       self.deserialize(hash) || []
     end
 
-    def find(list_id, params = {})
-      params[:id] = list_id
+    def find(obj_id, params = {})
+      params[:id] = obj_id
       hash = self.rest_client.find(params)
       self.deserialize(hash)
     end
