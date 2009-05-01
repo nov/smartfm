@@ -39,9 +39,13 @@
 
 == 0.3.1
 
-* add sessions API support
+* add sessions API calls
 * fixed extract API bugs
 
 == 0.4.0
 
 * OAuth DELETE calls works fine now.
+
+== 1.0.0
+
+* add friends, followers, likes and notifications API calls
