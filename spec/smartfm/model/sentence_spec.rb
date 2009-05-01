@@ -1,7 +1,11 @@
 require File.join(File.dirname(__FILE__), '..', '..', 'spec_helper')
 
-describe String do
-  it "should respond to length" do
-    "hoge".should respond_to(:length)
+smartest = Smartfm::Sentence.find(10828)
+
+Smartfm::Sentence::ATTRIBUTES.each do |attr|
+  describe Smartfm::Sentence, "##{attr}" do
+    it "should be accessible" do
+      smartest.should respond_to(attr)
+    end
   end
 end
