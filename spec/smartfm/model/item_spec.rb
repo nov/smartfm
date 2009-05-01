@@ -2,15 +2,25 @@ require File.join(File.dirname(__FILE__), '..', '..', 'spec_helper')
 
 smart = Smartfm::Item.find(33158, :include_sentences => true)
 
-describe Smartfm::Item do
-  it "should respond to attribute methods" do
-    Smartfm::Item::ATTRIBUTES.each do |attr|
+Smartfm::Item::ATTRIBUTES.each do |attr|
+  describe Smartfm::Item, "##{attr}" do
+    it "should be accessible" do
       smart.should respond_to(attr)
     end
-    Smartfm::Item::Response::ATTRIBUTES.each do |attr|
+  end
+end
+
+Smartfm::Item::Response::ATTRIBUTES.each do |attr|
+  describe Smartfm::Item::Response, "##{attr}" do
+    it "should be accessible" do
       smart.responses.first.should respond_to(attr)
     end
-    Smartfm::Item::Cue::ATTRIBUTES.each do |attr|
+  end
+end
+
+Smartfm::Item::Cue::ATTRIBUTES.each do |attr|
+  describe Smartfm::Item::Cue, "##{attr}" do
+    it "should be accessibles" do
       smart.cue.should respond_to(attr)
     end
   end
