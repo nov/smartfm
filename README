@@ -12,7 +12,7 @@
 
 == Installation
 
-  git clone http://github.com/nov/smartfm.git
+  git clone git://github.com/nov/smartfm.git
   cd smartfm
   rake install
 

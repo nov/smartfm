@@ -12,9 +12,9 @@ class Smartfm::Sentence < Smartfm::Base
   def rest_client; self.class.rest_client; end
 
   def initialize(params = {})
-    params[:translations] = [params[:translation]] if params[:translation]
-    params[:transliterations] = [params[:transliteration]] if params[:transliteration]
-    @id               = params[:id]
+    params[:translations]     = Array(params[:translation])     if params[:translation]
+    params[:transliterations] = Array(params[:transliteration]) if params[:transliteration]
+    @id               = params[:id].to_i if params[:id]
     @item             = params[:item]
     @list             = params[:list]
     @sound            = params[:sound]
@@ -60,11 +60,11 @@ class Smartfm::Sentence < Smartfm::Base
   end
 
   def translation
-    self.translations.first rescue nil
+    self.translations.first if self.translations
   end
 
   def transliteration
-    self.transliterations.first rescue nil
+    self.transliterations.first if self.transliterations
   end
 
 end

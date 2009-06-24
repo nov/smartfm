@@ -42,8 +42,8 @@ class Smartfm::Item < Smartfm::Base
   end
 
   def initialize(params = {})
-    params[:responses] = [params[:response]] if params[:response]
-    @id        = params[:id].to_i
+    params[:responses] = Array(params[:response]) if params[:response]
+    @id        = params[:id].to_i if params[:id]
     @list      = params[:list]
     @cue       = self.deserialize(params[:cue],       :as => Smartfm::Item::Cue)
     @responses = self.deserialize(params[:responses], :as => Smartfm::Item::Response)

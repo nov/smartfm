@@ -73,7 +73,7 @@ class Smartfm::RestClient::Base
       rescue Exception => e
         e.is_a?(RESTError) ? raise(e) : :success
       end
-    else  
+    else
       begin
         handle_json_response(response.body)
       rescue Exception => e
@@ -83,15 +83,15 @@ class Smartfm::RestClient::Base
   end
 
   def self.handle_json_response(json_response)
-    hash = JSON.parse(json_response)
-    unless (hash['error'].nil? rescue :success) # success response may be Array, not Hash.
-      if hash['error']['code'] == 404
+    result = JSON.parse(json_response)
+    unless result.is_a?(Array) || result['error'].nil?
+      if result['error']['code'] == 404
         return nil
       else
-        raise RESTError.new(:code => hash['error']['code'], :message => hash['error']['message'])
+        raise RESTError.new(:code => result['error']['code'], :message => result['error']['message'])
       end
     end
-    hash
+    result
   end
 
   def self.http_header

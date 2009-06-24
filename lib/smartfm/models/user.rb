@@ -12,7 +12,7 @@ class Smartfm::User < Smartfm::Base
     def initialize(params = {})
       @name        = params[:name]
       @gender      = params[:gender]
-      @birthday    = (Date.parse(params[:birthday]) rescue nil)
+      @birthday    = Date.parse(params[:birthday]) if params[:birthday]
       @description = params[:description]
       @blog_url    = params[:blog_url]
       @profile_url = params[:profile_url]
@@ -30,16 +30,16 @@ class Smartfm::User < Smartfm::Base
       attr_reader *ATTRIBUTES
 
       def initialize(params = {})
-        @timestamp = (params[:timestamp].to_i   rescue nil)
-        @seconds   = (params[:seconds].to_i     rescue nil)
+        @timestamp = params[:timestamp].to_i if params[:timestamp]
+        @seconds   = params[:seconds].to_i   if params[:seconds]
         @totals    = {
-          :seconds   => (params[:totals][:seconds].to_i   rescue nil),
-          :seen      => (params[:totals][:seen].to_i      rescue nil),
-          :completed => (params[:totals][:completed].to_i rescue nil)
+          :seconds   => params[:totals][:seconds]   ? params[:totals][:seconds].to_i   : nil,
+          :seen      => params[:totals][:seen]      ? params[:totals][:seen].to_i      : nil,
+          :completed => params[:totals][:completed] ? params[:totals][:completed].to_i : nil
         }
-        @seen      = (params[:seen].to_i        rescue nil)
-        @completed = (params[:completed].to_i   rescue nil)
-        @date      = (Date.parse(params[:date]) rescue nil)
+        @seen      = params[:seen].to_i        if params[:seen]
+        @completed = params[:completed].to_i   if params[:completed]
+        @date      = Date.parse(params[:date]) if params[:date]
       end
     end
 
@@ -48,16 +48,16 @@ class Smartfm::User < Smartfm::Base
       attr_reader *ATTRIBUTES
 
       def initialize(params = {})
-        @studied     = params[:studied]
-        @completed   = params[:completed]
-        @performance = params[:performance]
-        @best_speed  = params[:best_speed]
-        @best_score  = params[:best_score]
+        @studied     = params[:studied].to_i     if params[:studied]
+        @completed   = params[:completed].to_i   if params[:completed]
+        @performance = params[:performance].to_i if params[:performance]
+        @best_speed  = params[:best_speed].to_i  if params[:best_speed]
+        @best_score  = params[:best_score].to_i  if params[:best_score]
       end
     end
 
     def initialize(params = {})
-      @today         = (Date.parse(params[:today]) rescue nil)
+      @today         = Date.new(params[:today]) if params[:today]
       @results       = self.deserialize(params[:study_results], :as => Smartfm::User::Study::Result)
       @total_summary = self.deserialize(params[:total_summary], :as => Smartfm::User::Study::TotalSummary)
     end

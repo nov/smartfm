@@ -8,7 +8,7 @@ class Smartfm::Like < Smartfm::Base
   def rest_client; self.class.rest_client; end
 
   def initialize(params)
-    @id          = params[:id]
+    @id          = params[:id].to_i
     @type        = params[:user]
     @title       = params[:title]
     @description = params[:description]

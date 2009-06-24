@@ -1,8 +1,8 @@
 class Smartfm::List < Smartfm::Base
-  ATTRIBUTES = [:id, :title, :description, :icon, :square_icon, :item_count, :user_count, :iknow, :dictation, :brainspeed,
-                :language, :translation_language, :item_type, :transcript, :embed, :tags, :media_entry,
-                :attribution_license_id, :items, :sentences, :user]
-  READONLY_ATTRIBUTES = [:id, :icon, :item_count, :user_count, :iknow, :dictation, :brainspeed, :user]
+  ATTRIBUTES = [:id, :title, :description, :icon, :square_icon, :items_count, :users_count, :likes_count,
+                :iknow, :dictation, :brainspeed, :language, :translation_language, :item_type, :transcript,
+                :embed, :tags, :media_entry, :attribution_license_id, :items, :sentences, :user]
+  READONLY_ATTRIBUTES = [:id, :icon, :items_count, :users_count, :likes_count, :iknow, :dictation, :brainspeed, :user]
   attr_accessor *(ATTRIBUTES - READONLY_ATTRIBUTES)
   attr_reader   *READONLY_ATTRIBUTES
 
@@ -35,13 +35,14 @@ class Smartfm::List < Smartfm::Base
   end
 
   def initialize(params = {})
-    @id          = (params[:id].to_i rescue nil)
+    @id          = params[:id].to_i if params[:id]
     @title       = params[:title]
     @description = params[:description]
     @icon        = params[:icon]
     @square_icon = params[:square_icon]
-    @item_count  = (params[:item_count].to_i rescue nil)
-    @user_count  = (params[:user_count].to_i rescue nil)
+    @items_count = params[:items_count].to_i if params[:items_count]
+    @users_count = params[:users_count].to_i if params[:users_count]
+    @likes_count = params[:likes_count].to_i if params[:likes_count]
     @language    = params[:language]
     @translation_language = params[:translation_language]
     if @id and @translation_language
@@ -50,12 +51,12 @@ class Smartfm::List < Smartfm::Base
       @dictation  = Application.new(common_settings.merge(:dictation  => params[:dictation]))
       @brainspeed = Application.new(common_settings.merge(:brainspeed => params[:brainspeed]))
     end
-    @item_type   = params[:item_type]   # for list creation
-    @transcript  = params[:transcript]  # for list creation
-    @embed       = params[:embed]       # for list creation
-    @tags        = params[:tags]        # for list creation
-    @media_entry = params[:media_entry] # for list creation
-    @attribution_license_id = params[:attribution_license_id] # for list creation
+    @item_type   = params[:item_type]
+    @transcript  = params[:transcript]
+    @embed       = params[:embed]
+    @tags        = params[:tags]
+    @media_entry = params[:media_entry]
+    @attribution_license_id = params[:attribution_license_id].to_i if params[:attribution_license_id]
     @items       = self.deserialize(params[:items],     :as => Smartfm::Item)
     @sentences   = self.deserialize(params[:sentences], :as => Smartfm::Sentence)
     @user        = self.deserialize(params[:user],      :as => Smartfm::User)
