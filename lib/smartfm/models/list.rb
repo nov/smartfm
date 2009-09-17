@@ -13,7 +13,7 @@ class Smartfm::List < Smartfm::Base
   def rest_client; self.class.rest_client; end
 
   class Application < Smartfm::Base
-    ATTRIBUTES = [:application, :available, :progress, :list_id, :lang]
+    ATTRIBUTES = [:application, :available, :progress, :list_id, :lang, :href]
     attr_reader *ATTRIBUTES
 
     def initialize(params = {})
